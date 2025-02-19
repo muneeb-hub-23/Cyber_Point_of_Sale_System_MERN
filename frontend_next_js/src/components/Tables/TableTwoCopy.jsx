@@ -4,7 +4,7 @@ import Image from "next/image";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { handleDeleteTransaction } from "@/apirequests/getcustomersbyshopid";
 
-const TableTwoCopy = ({ transactions, toast, next, hasMore,fetchmoredata }) => {
+const TableTwoCopy = ({ transactions, toast, next, hasMore,fetchmoredata, setCount }) => {
   // The Infinite Scroll component needs the `next` function passed down through props
   // which will fetch more data when the user scrolls.
 
@@ -21,7 +21,7 @@ const TableTwoCopy = ({ transactions, toast, next, hasMore,fetchmoredata }) => {
           <p className="font-medium">Customer Name</p>
         </div>
         <div className="col-span-1 flex items-center">
-          <p className="font-medium">Date and Time</p>
+          <p className="font-medium">Date</p>
         </div>
         <div className="col-span-1 hidden items-center sm:flex">
           <p className="font-medium">Entry Type</p>
@@ -103,7 +103,7 @@ const TableTwoCopy = ({ transactions, toast, next, hasMore,fetchmoredata }) => {
               <Image
                 alt="delete icon"
                 className="mx-auto text-rose-500 cursor-pointer hover:transform hover:animate-bounce hover:scale-125"
-                onClick={() => { handleDeleteTransaction(transaction._id, toast, next) }}
+                onClick={() => { handleDeleteTransaction(transaction._id, toast, next); setCount(Math.random()) }}
                 height={30}
                 width={30}
                 src="/images/icons/delete_icon.svg"

@@ -15,12 +15,11 @@ export default function Page() {
   const token = localStorage.getItem("token")
   const [transactions, setTransactions] = useState(null)
   const [customer, setCustomer] = useState(null)
-  const params = useParams()
+
   const usefunction = async()=>{
     fetchTransactionsByID(slug,token).then(data => {
       setTransactions(data)
       getCustomerByID(slug,token).then(data2 => {
-        console.log(data2[0])
         setCustomer(data2[0])
       })
     })

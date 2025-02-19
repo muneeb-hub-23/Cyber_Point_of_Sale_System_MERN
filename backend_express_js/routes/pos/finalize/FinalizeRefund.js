@@ -152,7 +152,7 @@ async function createTransaction(customer, totalSum, fdate) {
       oldBalance: Number(customer.balance),
       newBalance
     });
-      await Customer.findByIdAndUpdate(customer._id, { $inc: { balance: parseFloat(Number(newBalance).toFixed(2)) } });
+      await Customer.findByIdAndUpdate(customer._id, { $inc: { balance: -(parseFloat(Number(newBalance).toFixed(2))) } });
     await newTransaction.save();
     return newTransaction;
   } catch (error) {

@@ -13,19 +13,14 @@ import { useGlobalState } from "@/js/globaluser";
 import LoginPage from "@/app/authentication/login/page";
 
 const Page = () => {
+    const [count , setCount] = useState(0)
     const {user} = useGlobalState()
     const token = localStorage.getItem("token")
     const params = useParams()
     const [customer, setCustomer] = useState(null)
     const [transactions, setTransactions] = useState(null)
     const [filteredTransactions, setFilteredTransactions] = useState(null)
-    const getdata = async () => {
-        let data = await getCustomerByID(params.slug,token)
-        setCustomer(data[0])
-        let data2 = await fetchTransactionsByID(params.slug,token)
-        setTransactions(data2)
-        setFilteredTransactions(data2)
-    }
+
     const handleChange = async (e) => {
         let x = e.target.value
         if (x === "") {
@@ -52,7 +47,7 @@ const Page = () => {
             setFilteredTransactions(data2)
         }
         getdata()
-    }, [])
+    }, [count])
     if(user && user.permissions.includes("customerkhatadetail")){
     return (
         <Menu>
@@ -127,7 +122,7 @@ const Page = () => {
 
                 <div className="rounded-sm border border-stroke w-full bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 
-                    <TableTwoCopy transactions={filteredTransactions && filteredTransactions} toast={toast} next={next} />
+                    <TableTwoCopy transactions={filteredTransactions && filteredTransactions} setCount={setCount} toast={toast} next={next} />
 
                 </div>
             </div>

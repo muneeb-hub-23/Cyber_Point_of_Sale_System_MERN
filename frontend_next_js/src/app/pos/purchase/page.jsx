@@ -522,6 +522,8 @@ const Page = () => {
                     calculateTotal(newlist)
                     // setCustomer(newBill[0].customer ? billData[0].customer : undefined)
                 }
+                let b = await fetchCustomers(selectedShop._id)
+                setCustomerList(b)
                 const productData = await fetchProducts(selectedShop._id);
                 setProducts(productData);
                 searchRef.current.focus()

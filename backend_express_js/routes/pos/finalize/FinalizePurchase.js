@@ -87,6 +87,7 @@ router.post('/', async (req, res) => {
     let NewTransaction;
     // Insert new transaction if customer exists
     if (customer) {
+      console.log(customer)
       NewTransaction = new Transaction({
         currentCustomer: customer,
         date: fdate,
@@ -99,7 +100,7 @@ router.post('/', async (req, res) => {
       await NewTransaction.save();
 
       // Update customer balance
-      await Customer.findByIdAndUpdate(customer._id, { $inc: { balance: parseFloat(Number(totalSum).toFixed(2)) } });
+      await Customer.findByIdAndUpdate(customer._id, { $inc: { balance: -(parseFloat(Number(totalSum).toFixed(2))) } });
     }
 
     // Update document status
