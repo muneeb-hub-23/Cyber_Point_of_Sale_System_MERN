@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Marwat Crockery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            width: 80mm;
+            margin: 0;
+        }
+
+        .receipt {
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        p {
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        h3 {
+            text-align: center;
+            margin: 1px;
+            padding-bottom: 8px;
+            font-size: medium;
+        }
+
+        .right {
+            text-align: right;
+            padding-left: 48px;
+        }
+
+        .left {
+            text-align: left;
+            padding-left: 3px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        table {
+            border-bottom: 2px solid black;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+    </style>
+    <script>
+        // Auto-print the receipt when the page loads
+        window.onload = function () {
+            window.print();
+            setTimeout(() => window.close(), 1000); // Close the window after printing
+        };
+    </script>
+</head>
+
+<body>
+    <div class="receipt">
+        <header style="text-align: center;">
+            <!-- <img src="http://172.16.100.1:4000/companyLogo.png" alt="logo" style="height: 80px; margin-bottom: 8px;"> -->
+            <img src="http://localhost:4000/companyLogo.png" alt="logo" style="height: 80px; margin-bottom: 8px;">
+            <h3 style="margin-bottom: 2px; padding-bottom: 2px;">MARWAT CROCKERY SHOP#<%= shopNumber %>
+            </h3>
+            <p class="center" style="font-weight: bold;">Main Bazar Losar Sharfoo Opposite Wah Palace Marriage Hall, Wah
+                Cantt</p>
+        </header>
+
+        <table style="width: 100%;">
+
+            <tr>
+                <td class="left">
+                    <p>Ghulam Murtaza</p>
+                </td>
+                <td>
+                    <p class="right">03120876294</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="left">
+                    <p>Easypaisa/Jazzcash</p>
+                </td>
+                <td>
+                    <p class="right">03225129030</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="left">Shop Number</p>
+                </td>
+                <td>
+                    <p class="right">03106666215</p>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left">
+                    <p>Receipt Number</p>
+                </td>
+                <td>
+                    <p class="right">
+                        <%= receiptNumber %>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td class="left">
+                    <p>Date & Time</p>
+                </td>
+                <td>
+                    <p class="right" style="padding: 0;">
+                        <%= dateandtime %>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="left">Operator</p>
+                </td>
+                <td>
+                    <p class="right" style="padding: 0;">
+                        <%= operator %>
+                    </p>
+                </td>
+            </tr>
+            <tr style="padding-top: 40px;">
+                <td>
+                    <p class="left">Rechecked By</p>
+                </td>
+                <td>
+                    <p class="right" style="padding: 0;">_________________</p>
+                </td>
+            </tr>
+
+            <% if (customerName) { %>
+                <tr>
+                    <td class="left">
+                        <p>Customer Name</p>
+                    </td>
+                    <td>
+                        <p class="right" style="padding: 0;">
+                            <%= customerName %>
+                        </p>
+                    </td>
+                </tr>
+                <% } %>
+
+
+
+        </table>
+        <table style="width: 100%;">
+            <tr style="background-color: black; color: white;">
+                <th style="text-align: left;">
+                    <p>Code</p>
+                </th>
+                <th style="text-align: left;">
+                    <p>Name</p>
+                </th>
+                <th>
+                    <p>Qty*Price</p>
+                </th>
+                <th>
+                    <p>Total</p>
+                </th>
+            </tr>
+            <% itemsList.forEach((item, index)=> { %>
+                <% const rowStyle=index % 2===1 ? 'font-weight: bold;' : '' ; %>
+                    <tr style=<%=rowStyle %>>
+                        <td>
+                            <p>
+                                <%= item.product.itemCode %>
+                            </p>
+                        </td>
+                        <td>
+                            <p>
+                                <%= item.product.name %>
+                            </p>
+                        </td>
+                        <td>
+                            <p>
+                                <%= parseFloat(item.qty.toFixed(2)) %> x <%= parseFloat(item.finalprice.toFixed(2)) %>
+                            </p>
+                        </td>
+                        <td>
+                            <p>
+                                <%= parseFloat(item.saleamount.toFixed(2)) %>
+                            </p>
+                        </td>
+                    </tr>
+                    <% }); %>
+
+        </table> 
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td class="left">
+                    <p style="margin-bottom: 0;">Total Items</p>
+                </td>
+                <td>
+                    <p style="margin-bottom: 0;" class="right">
+                        <%= totalItems %>
+                    </p>
+                </td>
+            </tr>
+            <% if (discount !==0) { %>
+                <tr>
+                    <td style="margin-bottom: 0;" class="left">
+                        <p style="font-size: medium;">Subtotal</p>
+                    </td>
+                    <td>
+                        <p class="right" style="padding: 0; font-size: medium; margin-bottom: 0; font-weight: bold;">
+                            <%= subTotal %>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">
+                        <p style="margin-bottom: 0; margin-top: 0;">Discount</p>
+                    </td>
+                    <td>
+                        <p class="right" style="margin-top: 0; margin-bottom: 0;">
+                            <%= discount %>
+                        </p>
+                    </td>
+                </tr>
+                <% } %>
+                    <tr>
+                        <td class="left">
+                            <p style="font-size: medium; margin-top: 0; margin-bottom: 0;">Total Amount</p>
+                        </td>
+                        <td>
+                            <p class="right"
+                                style="padding: 0; font-size: medium; font-weight: bold; margin-top: 0; margin-bottom: 0;">
+                                <%= totalAmount %>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <% paymentsList.forEach(payment=> { %>
+                        <tr>
+                            <td>
+                                <p style="margin-top: 0; margin-bottom: 0;" class="left">
+                                    <%= payment.name %>
+                                </p>
+                            </td>
+                            <td>
+                                <p class="right" style="margin-top: 0; margin-bottom: 0;">
+                                    <%= payment.amount %>
+                                </p>
+                            </td>
+                        </tr>
+                        <% }); %>
+
+
+                            <tr>
+                                <td>
+                                    <p class="left" style="font-size: medium; margin-top: 0; margin-bottom: 0;">Amount
+                                        Paid</p>
+                                </td>
+                                <td>
+                                    <p class="right"
+                                        style="padding: 0; font-size: medium; font-weight: bold; margin-top: 0; margin-bottom: 0;">
+                                        <%= amountPaid %>
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <% if (oldBalance!==0 || newBalance !==0) { %>
+                            <tr>
+                                <td>
+                                    <p class="left" style="font-size: medium; margin-top: 0; margin-bottom: 0;">
+                                        Previous Balance</p>
+                                </td>
+                                <td>
+                                    <p class="right"
+                                        style="padding: 0; font-size: medium; font-weight: bold; margin-top: 0; margin-bottom: 0;">
+                                        <%= oldBalance %>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="left" style="font-size: medium; margin-top: 0; margin-bottom: 0;">
+                                        New Balance</p>
+                                </td>
+                                <td>
+                                    <p class="right"
+                                        style="padding: 0; font-size: medium; font-weight: bold; margin-top: 0; margin-bottom: 0;">
+                                        <%= newBalance %>
+                                    </p>
+                                </td>
+                            </tr>
+                            <% } %>
+
+        </table>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+/* Hover Effect */
+.table-cell:hover {
+    background-color: #f0f0f0; /* Light grey on hover */
+}
+
+/* Selected Shop */
+.selected-shop {
+    background-color: #6ee7b7; /* Green color */
+    transform: scale(1.1); /* Slightly larger */
+    transition: all 0.3s ease;
+}
+
+/* Green background for matching total after discount and amount paid */
+.matching-payment {
+    background-color: #66bb6a; /* Green for matching */
+}
+
+/* Red background for mismatch (paid > total) */
+.payment-overpaid {
+    background-color: #f87171; /* Light red for overpaid */
+}
+
+/* Red background for mismatch (paid < total) */
+.payment-underpaid {
+    background-color: #fee2e2; /* Light rose for underpaid */
+}

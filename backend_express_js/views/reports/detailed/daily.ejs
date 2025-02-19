@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Daily Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #3c3c3c;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table td {
+            background-color: #f9f9f9;
+        }
+
+        table tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        .print-button {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .print-button:hover {
+            background-color: #45a049;
+        }
+
+        .print-button:focus {
+            outline: none;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                width: 100%;
+                padding: 10px;
+                box-shadow: none;
+            }
+
+            table th,
+            table td {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="report-header" id="reportHeader">
+            Report Generated on: <span id="dateTime"></span>
+        </div>
+
+        <h1>Detailed Daily Report of <%= titledate %></h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Shop Names</th>
+                    <% shops.forEach(function(shop) { %>
+                        <th>
+                            <%= shop.name %>
+                        </th>
+                        <% }); %>
+                            <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Stock Cost Amount</td>
+                    <% let totalCost=0; %>
+                        <% stock.forEach(function(st) { %>
+                            <td>
+                                <%= st.stockCost.toFixed(2) %>
+                            </td>
+                            <% totalCost +=st.stockCost; %>
+                                <% }); %>
+                                    <td>
+                                        <%= totalCost.toFixed(2) %>
+                                    </td>
+                </tr>
+                <tr>
+                    <td>Amount Difference (Sale - Cost)</td>
+                    <% let totalDiff=0; %>
+                        <% stock.forEach(function(st) { %>
+                            <td>
+                                <%= (st.stockSale - st.stockCost).toFixed(2) %>
+                            </td>
+                            <% totalDiff +=(st.stockSale - st.stockCost); %>
+                                <% }); %>
+                                    <td>
+                                        <%= totalDiff.toFixed(2) %>
+                                    </td>
+                </tr>
+                <tr>
+                    <td>Average Profit Margin (%)</td>
+                    <% let totalMargin=0; %>
+                        <% stock.forEach(function(st) { %>
+                            <td>
+                                <%= ((st.stockSale - st.stockCost) / st.stockCost * 100).toFixed(2) %>
+                            </td>
+                            <% totalMargin +=((st.stockSale - st.stockCost) / st.stockCost * 100); %>
+                                <% }); %>
+                                    <td>
+                                        <%= (totalMargin / stock.length).toFixed(2) %>
+                                    </td> <!-- Average profit margin -->
+                </tr>
+                <tr style="font-weight: bold; background-color: #765f01; color: white;">
+                    <td style="text-align: center; padding: 10px; background-color: #170a4f;">Stock Sale Amount</td>
+                    <% let totalSale = 0; %>
+                    <% stock.forEach(function(st) { %>
+                        <td style="text-align: center; padding: 10px; background-color: #170a4f;">
+                            <%= st.stockSale.toFixed(2) %>
+                        </td>
+                        <% totalSale += st.stockSale; %>
+                    <% }); %>
+                    <td style="text-align: center; padding: 10px; background-color: #170a4f; font-weight: bold; color: white;">
+                        <%= totalSale.toFixed(2) %>
+                    </td>
+                </tr>
+                
+
+                <tr>
+                    <td>Today Cash Sales</td>
+                    <% let todaySaleTotal=0; %>
+                        <% sales.forEach(function(st) { %>
+                            <td>
+                                <%= st.cashSale.toFixed(2) %>
+                            </td>
+                            <% todaySaleTotal +=st.cashSale; %>
+                                <% }); %>
+                                    <td>
+                                        <%= todaySaleTotal.toFixed(2) %>
+                                    </td>
+                </tr>
+
+                <tr>
+                    <td>Today Debit Sales</td>
+                    <% let todayDebitTotal = 0; %>
+                    <% sales.forEach(function(st) { %>
+                        <td><%= st.debitSale.toFixed(2) %></td>
+                        <% todayDebitTotal += st.debitSale; %>
+                    <% }); %>
+                    <td><%= todayDebitTotal.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Today Easypaisa Sales</td>
+                    <% let easypaisaTotal = 0; %>
+                    <% sales.forEach(function(st) { %>
+                        <td><%= st.easypaisaSale.toFixed(2) %></td>
+                        <% easypaisaTotal += st.easypaisaSale; %>
+                    <% }); %>
+                    <td><%= easypaisaTotal.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Today JazzCash Sales</td>
+                    <% let jazzcashTotal = 0; %>
+                    <% sales.forEach(function(st) { %>
+                        <td><%= st.jazzcashSale.toFixed(2) %></td>
+                        <% jazzcashTotal += st.jazzcashSale; %>
+                    <% }); %>
+                    <td><%= jazzcashTotal.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Today Upaisa Sales</td>
+                    <% let upaisaTotal = 0; %>
+                    <% sales.forEach(function(st) { %>
+                        <td><%= st.upaisaSale.toFixed(2) %></td>
+                        <% upaisaTotal += st.upaisaSale; %>
+                    <% }); %>
+                    <td><%= upaisaTotal.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Today Meezan Sales</td>
+                    <% let meezanTotal = 0; %>
+                    <% sales.forEach(function(st) { %>
+                        <td><%= st.meezanSale.toFixed(2) %></td>
+                        <% meezanTotal += st.meezanSale; %>
+                    <% }); %>
+                    <td><%= meezanTotal.toFixed(2) %></td>
+                </tr>
+                <tr style="font-weight: bold; background-color: #170a4f; color: white;">
+                    <td style="text-align: center; padding: 10px; background-color: #170a4f;">Today Total Sales</td>
+                    <% let total = 0; %>
+                    <% sales.forEach(function(st) { %>
+                        <td style="text-align: center; padding: 10px; background-color: #170a4f;"><%= st.saleTotal.toFixed(2) %></td>
+                        <% total += st.saleTotal; %>
+                    <% }); %>
+                    <td style="text-align: center; padding: 10px; background-color: #170a4f; font-weight: bold; color: white;"><%= total.toFixed(2) %></td>
+                </tr>
+                
+
+                <tr>
+                    <td>Cash Sales Profit</td>
+                    <% let cashProfit = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td><%= st.cashProfit.toFixed(2) %></td>
+                        <% cashProfit += st.cashProfit; %>
+                    <% }); %>
+                    <td><%= cashProfit.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Debit Sales Profit</td>
+                    <% let debitProfit = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td><%= st.debitProfit.toFixed(2) %></td>
+                        <% debitProfit += st.debitProfit; %>
+                    <% }); %>
+                    <td><%= debitProfit.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Easypaisa Sales Profit</td>
+                    <% let easypaisaProfit = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td><%= st.easypaisaProfit.toFixed(2) %></td>
+                        <% easypaisaProfit += st.easypaisaProfit; %>
+                    <% }); %>
+                    <td><%= easypaisaProfit.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>JazzCash Sales Profit</td>
+                    <% let jazzcashProfit = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td><%= st.jazzcashProfit.toFixed(2) %></td>
+                        <% jazzcashProfit += st.jazzcashProfit; %>
+                    <% }); %>
+                    <td><%= jazzcashProfit.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Upaisa Sales Profit</td>
+                    <% let upaisaProfit = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td><%= st.upaisaProfit.toFixed(2) %></td>
+                        <% upaisaProfit += st.upaisaProfit; %>
+                    <% }); %>
+                    <td><%= upaisaProfit.toFixed(2) %></td>
+                </tr>
+                
+                <tr>
+                    <td>Meezan Sales Profit</td>
+                    <% let meezanProfit = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td><%= st.meezanProfit.toFixed(2) %></td>
+                        <% meezanProfit += st.meezanProfit; %>
+                    <% }); %>
+                    <td><%= meezanProfit.toFixed(2) %></td>
+                </tr>
+                
+                <tr style="font-weight: bold; background-color: #170a4f; color: white;">
+                    <td style="text-align: center; padding: 10px; background-color: #170a4f;">Total Sales Profit</td>
+                    <% let totalProfitx = 0; %>
+                    <% profit.forEach(function(st) { %>
+                        <td style="text-align: center; padding: 10px; background-color: #170a4f;"><%= st.totalProfit.toFixed(2) %></td>
+                        <% totalProfitx += st.totalProfit; %>
+                    <% }); %>
+                    <td style="text-align: center; padding: 10px; background-color: #170a4f; font-weight: bold; color: white;"><%= totalProfitx.toFixed(2) %></td>
+                </tr>
+                
+                
+                
+                
+
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- Print Button -->
+    <button class="print-button" onclick="triggerPrint()">Print</button>
+
+
+    <script>
+        function triggerPrint() {
+            window.print();
+        }
+    
+        // Function to display the current date and time
+        function displayDateTime() {
+            var now = new Date();
+            
+            // Format the date
+            var date = now.toLocaleDateString();
+            
+            // Format the time in 12-hour format
+            var options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            var time = now.toLocaleTimeString([], options);
+    
+            // Update the content of the dateTime element with the formatted date and time
+            document.getElementById('dateTime').textContent = date + " at " + time;
+        }
+    
+        // Call the function to display the date and time when the page loads
+        window.onload = displayDateTime;
+    </script>
+    
+
+</body>
+
+</html>
