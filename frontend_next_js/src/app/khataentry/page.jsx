@@ -283,6 +283,7 @@ const KhataEntry = () => {
               >
                 <option value=""></option>
                 <option className="text-green-600" value="debit">Debit</option>
+                <option className="text-green-600" value="debit">FOR</option>
                 <option className="text-green-600" value="cash">Cash</option>
                 <option className="text-green-600" value="easypaisa">Easypaisa</option>
                 <option className="text-green-600" value="jazzcash">JazzCash</option>
