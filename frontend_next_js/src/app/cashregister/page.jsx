@@ -145,8 +145,9 @@ const Page = () => {
             ))}
           </select>
         </div>
-
+        <div className='rounded-sm border mb-5 shadow-lg border-stroke w-full text-center bg-white dark:border-strokedark dark:bg-boxdark'>
         <DatePickerOne warningDate={date} setWarningDate={dateChange} />
+        </div>
 
         <div className='rounded-sm border p-3 mt-5 mb-5 shadow-lg border-stroke w-full text-center bg-white dark:border-strokedark dark:bg-boxdark'>
           <div className="flex space-x-3 justify-center items-center text-center text-white font-bold text-lg bg-blue-600 mt-5">

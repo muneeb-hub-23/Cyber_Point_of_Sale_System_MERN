@@ -4,6 +4,7 @@ const Shop = require('../../../models/Shop')
 const Document = require('../../../models/Documents')
 const DocItem = require('../../../models/DocumentItem')
 const Product = require('../../../models/Product')
+const CashRegister = require('../../../models/CashRegister')
 
 
 function convertDateFormat(dateString) {
@@ -40,13 +41,13 @@ function convertToDateFormat(dateInput) {
 function getDateRange({ sdate, edate }) {
     const dates = [];
     let currentDate = new Date(
-        sdate.substring(0, 4), 
-        sdate.substring(4, 6) - 1, 
+        sdate.substring(0, 4),
+        sdate.substring(4, 6) - 1,
         sdate.substring(6, 8)
     );
     const endDate = new Date(
-        edate.substring(0, 4), 
-        edate.substring(4, 6) - 1, 
+        edate.substring(0, 4),
+        edate.substring(4, 6) - 1,
         edate.substring(6, 8)
     );
 
@@ -57,27 +58,24 @@ function getDateRange({ sdate, edate }) {
         dates.push(`${year}${month}${day}`);
         currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
     return dates;
 }
 router.get('/', async (req, res) => {
-    const {doctype,criteria,startdate,enddate} = req.headers
+    const { doctype, criteria, startdate, enddate } = req.headers
     let sdate = convertToDateFormat(startdate)
     let edate = convertToDateFormat(enddate)
-    let datesArray = getDateRange({sdate,edate})
-
+    let datesArray = getDateRange({ sdate, edate })
     let shops = await Shop.find();
     shops.sort((a, b) => {
         const shopA = parseInt(a.shopName.split(' ')[1]); // Extract the number from "Shop X"
         const shopB = parseInt(b.shopName.split(' ')[1]); // Extract the number from "Shop Y"
         return shopA - shopB; // Compare the numbers
     });
-    
-    let todayDocs = await Document.find({ 
-        date: { $in: datesArray }, 
-        status: "processed" 
+    let todayDocs = await Document.find({
+        date: { $in: datesArray },
+        status: "processed"
     });
-    
     let todayDocsIds = todayDocs.map(doc => { return doc._id })
     let todayDocsItems = await DocItem.find({ document: { $in: todayDocsIds } }).populate('document');
     let shopNames = shops.map(s => { return { id: s._id, name: s.shopName } });
@@ -86,12 +84,76 @@ router.get('/', async (req, res) => {
     let sales = [];
     let profit = [];
     const formattedDate = convertDateFormat(sdate);
+    const formattedDate2 = convertDateFormat(edate);
 
+    let cashRegisterEntries = await CashRegister.find({ date: { $in: datesArray } });
+    let wasooli = [];
+    let paidMoney = [];
+    let purchase = [];
 
     for (let shop in shops) {
+
+        let cashPaidMoney = 0;
+        let debitPaidMoney = 0;
+        let easypaisaPaidMoney = 0;
+        let jazzcashPaidMoney = 0;
+        let upaisaPaidMoney = 0;
+        let meezanPaidMoney = 0;
+
+        let totalPaidMoney = cashRegisterEntries.reduce((accumulator, currentEntry) => {
+            if(currentEntry.shop.toString() === shops[shop]._id.toString() && currentEntry.type === "paidmoney"){
+
+                if (currentEntry.method === "debit") {
+                    debitPaidMoney += currentEntry.amount
+                } else if (currentEntry.method === "cash") {
+                    cashPaidMoney += currentEntry.amount
+                } else if (currentEntry.method === "easypaisa") {
+                    easypaisaPaidMoney += currentEntry.amount
+                } else if (currentEntry.method === "jazzcash") {
+                    jazzcashPaidMoney += currentEntry.amount
+                } else if (currentEntry.method === "upaisa") {
+                    upaisaPaidMoney += currentEntry.amount
+                } else if (currentEntry.method === "meezan") {
+                    meezanPaidMoney += currentEntry.amount
+                }
+
+                return accumulator + currentEntry.amount;
+            }else{
+                return accumulator;
+            }
+          }, 0);
+        paidMoney.push({ shopid: shops[shop]._id, shopname: shops[shop].shopName,cashPaidMoney,debitPaidMoney,easypaisaPaidMoney,jazzcashPaidMoney,upaisaPaidMoney,meezanPaidMoney, amount: totalPaidMoney })
+        let cashWasooli = 0;
+        let debitWasooli = 0;
+        let easypaisaWasooli = 0;
+        let jazzcashWasooli = 0;
+        let upaisaWasooli = 0;
+        let meezanWasooli = 0;
+        let totalAmount = cashRegisterEntries.reduce((accumulator, currentEntry) => {
+            if(currentEntry.shop.toString() === shops[shop]._id.toString() && currentEntry.type === "wasool"){
+
+                if (currentEntry.method === "debit") {
+                    debitWasooli += currentEntry.amount
+                } else if (currentEntry.method === "cash") {
+                    cashWasooli += currentEntry.amount
+                } else if (currentEntry.method === "easypaisa") {
+                    easypaisaWasooli += currentEntry.amount
+                } else if (currentEntry.method === "jazzcash") {
+                    jazzcashWasooli += currentEntry.amount
+                } else if (currentEntry.method === "upaisa") {
+                    upaisaWasooli += currentEntry.amount
+                } else if (currentEntry.method === "meezan") {
+                    meezanWasooli += currentEntry.amount
+                }
+
+                return accumulator + currentEntry.amount;
+            }else{
+                return accumulator;
+            }
+          }, 0);
+        wasooli.push({ shopid: shops[shop]._id, shopname: shops[shop].shopName,cashWasooli,debitWasooli,easypaisaWasooli,jazzcashWasooli,upaisaWasooli,meezanWasooli, amount: totalAmount })
         let stockCost = 0;
         let stockSale = 0;
-
         for (let product in products) {
             if (products[product].shop._id.toString() === shops[shop]._id.toString()) {
                 stockCost += (products[product].cost + (products[product].iskharchaincludedinsale ? products[product].kharcha : 0)) * products[product].onHand
@@ -134,6 +196,37 @@ router.get('/', async (req, res) => {
         }
         sales.push({ shopid: shops[shop]._id, shopname: shops[shop].shopName, saleTotal, cashSale, debitSale, easypaisaSale, jazzcashSale, upaisaSale, meezanSale })
 
+        let purchaseTotal = 0;
+        let cashpurchase = 0;
+        let debitpurchase = 0;
+        let easypaisapurchase = 0;
+        let jazzcashpurchase = 0;
+        let upaisapurchase = 0;
+        let meezanpurchase = 0;
+
+        for (let purchase of todayDocs) {
+
+            if (purchase.linkedShop.toString() === shops[shop]._id.toString() && purchase.doctype === "purchase") {
+                purchaseTotal += purchase.amountpaid
+                for (let payment in purchase.payment) {
+                    let currentPayment = purchase.payment[payment]
+                    if (currentPayment.name === "Debit") {
+                        debitpurchase += currentPayment.amount
+                    } else if (currentPayment.name === "Cash") {
+                        cashpurchase += currentPayment.amount
+                    } else if (currentPayment.name === "Easypaisa") {
+                        easypaisapurchase += currentPayment.amount
+                    } else if (currentPayment.name === "Jazzcash") {
+                        jazzcashpurchase += currentPayment.amount
+                    } else if (currentPayment.name === "Upaisa") {
+                        upaisapurchase += currentPayment.amount
+                    } else if (currentPayment.name === "Meezan") {
+                        meezanpurchase += currentPayment.amount
+                    }
+                }
+            }
+        }
+        purchase.push({ shopid: shops[shop]._id, shopname: shops[shop].shopName, purchaseTotal, cashpurchase, debitpurchase, easypaisapurchase, jazzcashpurchase, upaisapurchase, meezanpurchase })
 
 
 
@@ -153,10 +246,10 @@ router.get('/', async (req, res) => {
                 // Iterate over the payments for the current item
                 for (var k in currentItem.document.payment) {
                     let currentPayment = currentItem.document.payment[k];
-                
+
                     // Calculate proportionate profit based on the payment amount
                     let proportionateProfit = (currentItem.saleamount - currentItem.costamount) * (currentPayment.amount / currentItem.document.amountpaid);
-                
+
                     if (currentPayment.name === "Debit") {
                         if (currentPayment.amount === currentItem.document.amountpaid) {
                             debitProfit += (currentItem.saleamount - currentItem.costamount); // Full profit if payment matches the amount paid
@@ -195,7 +288,7 @@ router.get('/', async (req, res) => {
                         }
                     }
                 }
-                
+
 
 
 
@@ -207,13 +300,16 @@ router.get('/', async (req, res) => {
 
 
 
-
     res.render('reports/detailed/daily', {
-        titledate:formattedDate,
+        titledate: formattedDate,
+        enddate: formattedDate2,
         stock,
         sales,
         shops: shopNames,
         profit,
+        wasooli,
+        paidMoney,
+        purchase
     });
 
 

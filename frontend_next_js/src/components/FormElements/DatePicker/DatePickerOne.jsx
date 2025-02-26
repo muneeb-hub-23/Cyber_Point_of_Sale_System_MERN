@@ -9,8 +9,8 @@ const DatePickerOne = ({ setWarningDate }) => {
     flatpickr(".form-datepicker", {
       mode: "single",
       dateFormat: "M j, Y",
-      prevArrow: <MdChevronLeft />,  // React icon for previous arrow
-      nextArrow: <MdChevronRight />, // React icon for next arrow
+      prevArrow: '<span class="flatpickr-prev">←</span>',  // Use string or HTML for the previous arrow
+      nextArrow: '<span class="flatpickr-next">→</span>',  // Use string or HTML for the next arrow
     });
   }, []);
 
@@ -26,7 +26,7 @@ const DatePickerOne = ({ setWarningDate }) => {
   };
 
   return (
-    <div className="relative w-full max-w-lg">
+    <div className="relative w-full">
       <input
         className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-normal outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
         placeholder="mm/dd/yyyy"
@@ -35,7 +35,7 @@ const DatePickerOne = ({ setWarningDate }) => {
         onInput={handleChange}
       />
 
-      {/* Datepicker icons for previous and next */}
+      {/* Custom datepicker icons for previous and next */}
       <div className="pointer-events-none absolute inset-0 left-auto right-5 flex items-center">
         <MdChevronLeft className="text-gray-500" size={24} />
       </div>
