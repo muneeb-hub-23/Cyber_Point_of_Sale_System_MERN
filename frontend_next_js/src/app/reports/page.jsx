@@ -58,7 +58,7 @@ if(user && user.permissions.includes("reports")){
         <div className="flex justify-start space-x-4 animate-fade-in-down">
 
             <div onClick={async () => { getReport("detailed", "daily",startdate,enddate,setIframeSrc,setShowingReport,token) }}>
-              <Box name="Daily Detailed Report" icon={<GrDocumentPerformance />} />
+              <Box name="Detailed Report" icon={<GrDocumentPerformance />} />
             </div>
 
           </div>
