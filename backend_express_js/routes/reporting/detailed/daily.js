@@ -90,6 +90,7 @@ router.get('/', async (req, res) => {
     let wasooli = [];
     let paidMoney = [];
     let purchase = [];
+    let salesmanwasooli = [];
 
     for (let shop in shops) {
 
@@ -129,8 +130,16 @@ router.get('/', async (req, res) => {
         let jazzcashWasooli = 0;
         let upaisaWasooli = 0;
         let meezanWasooli = 0;
+        let wasoolthroughsalesman = 0;
+        let wasoolthroughcounter = 0;
         let totalAmount = cashRegisterEntries.reduce((accumulator, currentEntry) => {
             if(currentEntry.shop.toString() === shops[shop]._id.toString() && currentEntry.type === "wasool"){
+
+                if(currentEntry.transactionCollectedFrom === "salesman"){
+                    wasoolthroughsalesman+= currentEntry.amount
+                }else{
+                    wasoolthroughcounter += currentEntry.amount
+                }
 
                 if (currentEntry.method === "debit") {
                     debitWasooli += currentEntry.amount
@@ -146,12 +155,16 @@ router.get('/', async (req, res) => {
                     meezanWasooli += currentEntry.amount
                 }
 
+
+
                 return accumulator + currentEntry.amount;
             }else{
                 return accumulator;
             }
           }, 0);
         wasooli.push({ shopid: shops[shop]._id, shopname: shops[shop].shopName,cashWasooli,debitWasooli,easypaisaWasooli,jazzcashWasooli,upaisaWasooli,meezanWasooli, amount: totalAmount })
+        salesmanwasooli.push({ shopid: shops[shop]._id, shopname: shops[shop].shopName,wasoolthroughsalesman,wasoolthroughcounter })
+
         let stockCost = 0;
         let stockSale = 0;
         for (let product in products) {
@@ -309,7 +322,8 @@ router.get('/', async (req, res) => {
         profit,
         wasooli,
         paidMoney,
-        purchase
+        purchase,
+        salesmanwasooli
     });
 
 

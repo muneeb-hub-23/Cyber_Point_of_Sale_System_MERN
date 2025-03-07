@@ -11,6 +11,7 @@ const cashRegisterSchema = new mongoose.Schema({
     amount:{type:Number,default:0},
     category:{type:String,default:"calculate"},
     givento:{type:String,default:""},
+    transactionCollectedFrom:{type:String,default:"counter"},
 
 },{timestamps:true})
 

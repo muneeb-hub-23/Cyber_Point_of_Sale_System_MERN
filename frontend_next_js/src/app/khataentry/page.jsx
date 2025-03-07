@@ -13,9 +13,12 @@ import Searchoption from './Searchoption'
 import { useGlobalState } from "@/js/globaluser";
 import Menu from '@/components/Menu'
 import LoginPage from "@/app/authentication/login/page";
+import Switcherx from '@/components/Switchers/Switcherx';
 
 const KhataEntry = () => {
   const [clearCustomer, setClearCustomer] = useState(true)
+  const [transactionCollectedFrom, setTransactionCollectedFrom] = useState("counter")
+  const [trnscollected, settrnscollected] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const { user } = useGlobalState()
   const token = localStorage.getItem("token")
@@ -41,6 +44,16 @@ const KhataEntry = () => {
     let cust = await fetchCustomers(document.getElementById("shopID").value, token)
     setCustomers(cust)
   }
+
+  const handlechangex = (e) => {
+    if (e === "false") {
+      setTransactionCollectedFrom("counter");
+    } else {
+      setTransactionCollectedFrom("salesman");
+    }
+  };
+  
+
   const shopChange = async (e) => {
     setSelectedShop(e.target.value)
     let trns = await fetchTransactions(e.target.value, token)
@@ -101,7 +114,7 @@ const KhataEntry = () => {
     }
 
     if (trnsType !== "" && amount > 0 && currentCustomer && method !== "") {
-      let postData = { currentCustomer, transactionType, amount, trnsType, date: workingDate, method, user: user._id }
+      let postData = { currentCustomer, transactionType, amount, trnsType, date: workingDate, method, user: user._id, transactionCollectedFrom }
       if (enabled) {
         postData.warning = { date: parseInt(warningDate), resolved: false, relation: transactionType, user: user._id }
       }
@@ -201,15 +214,22 @@ const KhataEntry = () => {
               </select>
               <div className="flex border border-primary rounded-sm w-4/12 space-x-3 items-center px-3">
                 <p className="text-white text-md">Clear Customer After Submit</p>
-                <input
-                  className="w-20 rounded-full border"
-                  type="checkbox"
-                  value={clearCustomer}
-                  onChange={(e) => {
-                    setClearCustomer(e.target.checked);
-                  }}
-                  checked = {clearCustomer}
+                <Switcherx
+                  onChangex={()=>{return}}
+                  enabled={clearCustomer}
+                  setEnabled={setClearCustomer}
+                  id="clearcustomeraftersubmit"
                 />
+              </div>
+              <div className="flex border border-primary rounded-sm w-4/12 space-x-3 items-center px-3">
+                <p className="text-white text-md">Collected From</p>
+                <Switcherx
+                  onChangex={handlechangex}
+                  enabled={trnscollected}
+                  setEnabled={settrnscollected}
+                  id="collectedfrom"
+                />
+                <p className="text-white text-md">{transactionCollectedFrom}</p>
               </div>
             </div>
             <h2 className="text-xl mx-3 mt-3">Add New Entry</h2>

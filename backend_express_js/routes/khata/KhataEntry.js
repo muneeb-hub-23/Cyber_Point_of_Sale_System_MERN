@@ -8,7 +8,7 @@ const CashRegister = require('../../models/CashRegister')
 
 router.post('/', async (req, res) => {
     try {
-        let { currentCustomer, amount, trnsType,user, transactionType,method,date } = req.body;
+        let { currentCustomer, amount, trnsType,user, transactionType,method,date,transactionCollectedFrom } = req.body;
         amount = Number(amount); // Ensure amount is treated as a number
 
         const check = await Customer.findById(currentCustomer._id);
@@ -25,7 +25,8 @@ router.post('/', async (req, res) => {
             type:transactionType,
             amount,
             shop:currentCustomer.linkedShop,
-            method
+            method,
+            transactionCollectedFrom
         })
         await newEntry.save()
         if (trnsType === 'plus') {

@@ -434,6 +434,32 @@
                                     </td>
                 </tr>
                 <tr style="font-weight: bold;">
+                    <td style="text-align: left;">Wasool Through Salesman</td>
+                    <% let maintotal=0; %>
+                        <% salesmanwasooli.forEach(function(wasool) { %>
+                            <td style="text-align: center;">
+                                <%= wasool.wasoolthroughsalesman.toFixed(2) %>
+                            </td>
+                            <% maintotal +=wasool.wasoolthroughsalesman; %>
+                                <% }); %>
+                                    <td style="text-align: center; font-weight: bold;">
+                                        <%= maintotal.toFixed(2) %>
+                                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Wasool Through Counter</td>
+                    <% let maintotal2=0; %>
+                        <% salesmanwasooli.forEach(function(wasool) { %>
+                            <td style="text-align: center;">
+                                <%= wasool.wasoolthroughcounter.toFixed(2) %>
+                            </td>
+                            <% maintotal2 +=wasool.wasoolthroughcounter; %>
+                                <% }); %>
+                                    <td style="text-align: center; font-weight: bold;">
+                                        <%= maintotal2.toFixed(2) %>
+                                    </td>
+                </tr>
+                <tr style="font-weight: bold;">
                     <td style="text-align: left;">Cash Paid Money</td>
                     <% let cashpaidMoney=0; %>
                         <% paidMoney.forEach(function(paid) { %>

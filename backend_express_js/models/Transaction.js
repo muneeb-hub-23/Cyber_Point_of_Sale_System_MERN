@@ -23,6 +23,7 @@ const transactionSchema = new mongoose.Schema({
       trnsType:{type:String},
       oldBalance:{type:Number},
       newBalance:{type:Number},
+      transactionCollectedFrom:{type:String,default:"counter"},
       warning:{
         date:{type:Number,default:0},
         resolved:{type:Boolean,default:true},

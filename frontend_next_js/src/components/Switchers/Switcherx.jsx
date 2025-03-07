@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Switcherx = ({enabled,setEnabled,id}) => {
+const Switcherx = ({enabled,setEnabled,id,onChangex}) => {
   return (
     <div>
       <label
@@ -14,6 +14,7 @@ const Switcherx = ({enabled,setEnabled,id}) => {
             value={!enabled}
             className="!bg-rose-600 sr-only"
             onChange={(e) => {
+              onChangex && onChangex(e.target.value)
               setEnabled(!enabled);
             }}
           />
