@@ -234,8 +234,8 @@ const Page = () => {
             let match = itemsList[x];
             totalamount += match.saleamount
             totalexpense += match.expense * match.qty
-            totalcost += match.costamount
-            costexpense += match.costExpense * match.qty
+            totalcost += match.cost * match.qty
+            costexpense += match.cost * match.qty
         }
 
         setTotal({ totalitems: parseFloat(totalitems.toFixed(2)), totalamount: parseFloat(totalamount.toFixed(2)), totalexpense: parseFloat(totalexpense.toFixed(2)), totalcost: parseFloat(totalcost.toFixed(2)), costexpense: parseFloat(costexpense.toFixed(2)), discount: 0 })
@@ -250,7 +250,6 @@ const Page = () => {
     }
 
     const handleEnter = async (product) => {
-        console.log(product)
 
         setSearchTerm('');
         const quantity = Number(quantityinput.current.value);
@@ -261,12 +260,12 @@ const Page = () => {
                 product: product._id,
                 cost: product.cost,
                 expense: product.kharcha,
-                costExpense: product.iskharchaincludedinsale ? product.cost + product.kharcha : product.cost,
+                costExpense:  product.cost + product.kharcha,
                 tax: product.tax.amount,
                 discount: { amount: 0, percentage: 0 },
                 sale: product.sale,
                 qty: quantity,
-                costamount: product.iskharchaincludedinsale ? (product.cost + product.kharcha) * quantity : product.cost * quantity,
+                costamount: product.cost * quantity,
                 finalprice: product.sale,
                 saleamount: product.sale * quantity,
                 user: user._id
@@ -770,7 +769,7 @@ const Page = () => {
                             <div className='w-1/12 p-2 text-center text-white'>Qty/Pack</div>
                             <div className='w-1/12 p-2 text-center text-white'>Cost Price</div>
                             <div className='w-1/12 p-2 text-center text-white'>Expense</div>
-                            <div className='w-1/12 p-2 text-justify text-white'>Cost Expense</div>
+                            {/* <div className='w-1/12 p-2 text-justify text-white'>Cost Expense</div> */}
                             <div className='w-1/12 p-2 text-center text-white'>Quantity</div>
                             <div className='w-1/12 p-2 text-center text-white'>Total Cost</div>
                             <div className='w-1/12 p-2 text-center text-white'>Sale Price</div>
@@ -793,7 +792,7 @@ const Page = () => {
                                 <div className="w-1/12 p-2 text-center text-white">{item.productData.unit}</div>
                                 <div className="w-1/12 p-2 text-center text-white">{item.cost}</div>
                                 <div className="w-1/12 p-2 text-center text-white">{item.expense}</div>
-                                <div className="w-1/12 p-2 text-center text-white">{item.costExpense}</div>
+                                {/* <div className="w-1/12 p-2 text-center text-white">{item.costExpense}</div> */}
                                 <div className="w-1/12 p-2 text-center text-white">{item.qty}</div>
                                 <div className="w-1/12 p-2 text-center text-white">{item.costamount}</div>
                                 <div className="w-1/12 p-2 text-center text-white">{item.sale}</div>
@@ -887,14 +886,14 @@ const Page = () => {
                             </div>
 
                             <div className='flex justify-around ml-auto hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300 text-rose-500 text-md font-bold w-full p-2'>
-                                <div className='w-1/2 pr-1'>Total Delivery Expense:</div>
+                                <div className='w-1/2 pr-1'>Total Expense:</div>
                                 <div className='w-1/2 text-xl'>{total && total.totalexpense}</div>
                             </div>
 
-                            <div className='flex justify-around ml-auto hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300 text-rose-500 text-md font-bold w-full p-2'>
+                            {/* <div className='flex justify-around ml-auto hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300 text-rose-500 text-md font-bold w-full p-2'>
                                 <div className='w-1/2 pr-1'>Total Cost:</div>
                                 <div className='w-1/2 text-xl'>{total && total.totalcost}</div>
-                            </div>
+                            </div> */}
 
 
                         </div>
@@ -903,12 +902,12 @@ const Page = () => {
 
 
                             <div className='flex justify-around hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300 ml-auto text-green-500 font-bold text-md w-full p-2'>
-                                <div className='w-1/2 pr-1'>Total Delivery + Cost</div>
+                                <div className='w-1/2 pr-1'>Total Cost:</div>
                                 <div className='w-1/2 text-xl'>{total && total.costexpense}</div>
                             </div>
 
                             <div className='flex justify-around hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300 ml-auto text-green-500 font-bold text-xl w-full p-2'>
-                                <div className='w-1/2'>Total Sale Amount:</div>
+                                <div className='w-1/2'>Total Sale:</div>
                                 <div className='w-1/2'>{total && total.totalamount}</div>
                             </div>
                         </div>

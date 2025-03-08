@@ -563,9 +563,9 @@ const Page = () => {
             />
           </div>
           <div className="flex justify-between">
-            <div className="w-1/3">
+            <div className="w-1/2">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                Delivery Expense
+                Expense
               </label>
               <input
                 value={deliveryExpense}
@@ -577,9 +577,9 @@ const Page = () => {
                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-black"
               />
             </div>
-            <div className="w-1/3 pl-5">
+            <div className="w-1/2 pl-5">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                Cost Price With Delivery Expense
+                Cost Price With Expense
               </label>
               <input
                 value={costPlusDelivery}
@@ -590,7 +590,7 @@ const Page = () => {
                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-black"
               />
             </div>
-            <div className="w-1/3 pl-5">
+            {/* <div className="w-1/3 pl-5">
               <label className="mb-5 block text-sm font-medium text-black dark:text-white">
                 Does Cost Price Include Delivery Expense
               </label>
@@ -600,12 +600,12 @@ const Page = () => {
                 setEnabled={setDoesCostIncludesDeliveryExpense}
                 id="doesCostIncludesDeliveryExpense"
               />
-            </div>
+            </div> */}
           </div>
           <div>
-            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+            {/* <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Markup
-            </label>
+            </label> */}
             <div className="flex justify-between">
               <div className="w-1/3">
                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -649,7 +649,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <div className="w-1/4">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                 Tax Amount
@@ -701,7 +701,7 @@ const Page = () => {
                 id="doessaleincludetax"
               />
             </div>
-          </div>
+          </div> */}
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Sale Price

@@ -54,15 +54,10 @@ const sanitizeDecimalInput = (value, isCostField = true) => {
     return value;
   }
 
-  // This regex allows:
-  // - One or more digits before the decimal point
-  // - An optional decimal point
-  // - Up to two digits after the decimal point
+
   const regex = /^[0-9]*\.?[0-9]{0,2}$/;
 
-  // If the input matches the regex, we check if it's a decimal point
   if (regex.test(value)) {
-    // If a decimal point is detected and it's the first time, set pointforcost/pointforsale to true
     if (value.includes(".") && !value.endsWith(".")) {
       if (isCostField) setpointforcost(false); // Reset point when digits after decimal are added
       else setpointforsale(false);
@@ -72,8 +67,6 @@ const sanitizeDecimalInput = (value, isCostField = true) => {
     }
     return value;
   }
-
-  // If the value doesn't match, remove the last character
   return value.slice(0, -1);
 };
 
@@ -247,12 +240,6 @@ const handlechange = async (e) => {
   
 };
 
-
-  
-  
-  
-  
-  
   const fetchnewcode = async () => {
     let response = await fetch(apiaddress + '/management/products/getnewcode')
     let parsed = await response.json()
@@ -466,7 +453,6 @@ const handlechange = async (e) => {
               }}
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
             >
-              <option value="">Select Shop</option>
               {shops &&
                 shops.map((shop, key) => (
                   <option key={key} value={shop._id}>
@@ -548,9 +534,9 @@ const handlechange = async (e) => {
             />
           </div>
           <div className="flex justify-between">
-            <div className="w-1/3">
+            <div className="w-1/2">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                Delivery Expense
+                Expense
               </label>
               <input
                 value={deliveryExpense}
@@ -562,9 +548,9 @@ const handlechange = async (e) => {
                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-black"
               />
             </div>
-            <div className="w-1/3 pl-5">
+            <div className="w-1/2 pl-5">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                Cost Price With Delivery Expense
+                Cost Price With Expense
               </label>
               <input
                 value={costPlusDelivery}
@@ -575,7 +561,7 @@ const handlechange = async (e) => {
                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-black"
               />
             </div>
-            <div className="w-1/3 pl-5">
+            {/* <div className="w-1/3 pl-5">
               <label className="mb-5 block text-sm font-medium text-black dark:text-white">
                 Does Cost Price Include Delivery Expense
               </label>
@@ -585,12 +571,12 @@ const handlechange = async (e) => {
                 setEnabled={setDoesCostIncludesDeliveryExpense}
                 id="doesCostIncludesDeliveryExpense"
               />
-            </div>
+            </div> */}
           </div>
           <div>
-            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+            {/* <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Markup
-            </label>
+            </label> */}
             <div className="flex justify-between">
               <div className="w-1/3">
                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -634,7 +620,7 @@ const handlechange = async (e) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <div className="w-1/4">
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                 Tax Amount
@@ -686,7 +672,7 @@ const handlechange = async (e) => {
                 id="doessaleincludetax"
               />
             </div>
-          </div>
+          </div> */}
           <div>
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Sale Price
