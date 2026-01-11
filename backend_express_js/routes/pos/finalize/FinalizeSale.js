@@ -75,6 +75,7 @@ router.post('/', async (req, res) => {
       }
       let itemsList = await DocItem.find({document:document._id})
       let totalSum = thisShopData.shopPayments.reduce((total, l) => total + (l.name==="Debit" && l.amount), 0)
+      let debitPayment = thisShopData.shopPayments.find(p => p.name === "Debit")
       async function updateProductHistory() {
         try {
           const productIds = itemsList.map(item => item.product._id);
@@ -128,7 +129,9 @@ router.post('/', async (req, res) => {
           amount: totalSum,
           trnsType: 'plus',
           oldBalance: customer.balance,
-          newBalance: customer.balance + totalSum
+          newBalance: customer.balance + totalSum,
+          daysToClear: debitPayment ? debitPayment.daysToClear || 0 : 0,
+          remarks: debitPayment ? debitPayment.remarks || "" : ""
         });
         await NewTransaction.save();
         let data = await Customer.findByIdAndUpdate(customer._id, { $inc: { balance: totalSum.toFixed(2) } });

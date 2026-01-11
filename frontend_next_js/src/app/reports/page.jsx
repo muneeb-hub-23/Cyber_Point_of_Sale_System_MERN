@@ -1,5 +1,5 @@
 'use client';
-import React, { useState,useRef } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import { FiCalendar } from 'react-icons/fi';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,6 +11,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useGlobalState } from "@/js/globaluser";
 import LoginPage from "@/app/authentication/login/page";
+import { fetchShops } from '@/apirequests/getcustomersbyshopid';
+import apiaddress from '@/apirequests/apiaddress';
 
 const Page = () => {
   const iframeRef = useRef(null);
@@ -19,12 +21,74 @@ const Page = () => {
   const [enddate, setenddate] = useState(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());
   const [shops, setShops] = useState([])
-  const [selectedShop, setSelectedShop] = useState("")
+  const [selectedShop, setSelectedShop] = useState("all")
+  const [customers, setCustomers] = useState([])
+  const [selectedCustomer, setSelectedCustomer] = useState("all")
+  const [suppliers, setSuppliers] = useState([])
+  const [selectedSupplier, setSelectedSupplier] = useState("all")
   const [paymentType, setPaymentType] = useState("")
   const [showingReport, setShowingReport] = useState(false)
   const [iframeSrc, setIframeSrc] = useState("");
   const [hidebtn, sethidebtn] = useState(false)
   const token = localStorage.getItem("token")
+
+  useEffect(() => {
+    const loadShopsAndCustomers = async () => {
+      try {
+        const shopsData = await fetchShops(token);
+        setShops(shopsData);
+        
+        // Fetch all customers
+        const customersResponse = await fetch(apiaddress + '/customers/getallcustomers', {
+          method: 'GET',
+          headers: { token }
+        });
+        const customersData = await customersResponse.json();
+        setCustomers(customersData);
+        
+        // Fetch all suppliers
+        const suppliersResponse = await fetch(apiaddress + '/customers/getallsuppliers', {
+          method: 'GET',
+          headers: { token }
+        });
+        const suppliersData = await suppliersResponse.json();
+        setSuppliers(suppliersData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
+    if (user) {
+      loadShopsAndCustomers();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    // Filter customers based on selected shop
+    const filterCustomers = async () => {
+      if (selectedShop === 'all') {
+        const response = await fetch(apiaddress + '/customers/getallcustomers', {
+          method: 'GET',
+          headers: { token }
+        });
+        const customersData = await response.json();
+        setCustomers(customersData);
+      } else {
+        const response = await fetch(apiaddress + '/customers/getcustomersbyshop', {
+          method: 'GET',
+          headers: { 
+            token,
+            shopid: selectedShop
+          }
+        });
+        const customersData = await response.json();
+        setCustomers(customersData);
+      }
+      setSelectedCustomer('all');
+    };
+    if (selectedShop && user) {
+      filterCustomers();
+    }
+  }, [selectedShop]);
 
 
 if(user && user.permissions.includes("reports")){
@@ -57,8 +121,28 @@ if(user && user.permissions.includes("reports")){
         <div className={`min-h-screen bg-gray-900 bg-boxdark p-3 border-r-2 border-slate-600 w-3/4`}>
         <div className="flex justify-start space-x-4 animate-fade-in-down">
 
-            <div onClick={async () => { getReport("detailed", "daily",startdate,enddate,setIframeSrc,setShowingReport,token) }}>
+            <div onClick={async () => { getReport("detailed", "daily",startdate,enddate,setIframeSrc,setShowingReport,token,selectedShop,selectedCustomer,selectedSupplier) }}>
               <Box name="Detailed Report" icon={<GrDocumentPerformance />} />
+            </div>
+            
+            <div onClick={async () => { getReport("latepayments", "",startdate,enddate,setIframeSrc,setShowingReport,token,selectedShop,selectedCustomer,selectedSupplier) }}>
+              <Box name="Late Payments" icon={<GrDocumentPerformance />} />
+            </div>
+            
+            <div onClick={async () => { getReport("productsales", "",startdate,enddate,setIframeSrc,setShowingReport,token,selectedShop,selectedCustomer,selectedSupplier) }}>
+              <Box name="Product Sales" icon={<GrDocumentPerformance />} />
+            </div>
+            
+            <div onClick={async () => { getReport("suppliersales", "",startdate,enddate,setIframeSrc,setShowingReport,token,selectedShop,selectedCustomer,selectedSupplier) }}>
+              <Box name="Supplier Sales" icon={<GrDocumentPerformance />} />
+            </div>
+            
+            <div onClick={async () => { getReport("purchases", "",startdate,enddate,setIframeSrc,setShowingReport,token,selectedShop,selectedCustomer,selectedSupplier) }}>
+              <Box name="Purchase Report" icon={<GrDocumentPerformance />} />
+            </div>
+            
+            <div onClick={async () => { getReport("supplierpurchases", "",startdate,enddate,setIframeSrc,setShowingReport,token,selectedShop,selectedCustomer,selectedSupplier) }}>
+              <Box name="Supplier Purchase" icon={<GrDocumentPerformance />} />
             </div>
 
           </div>
@@ -108,9 +192,37 @@ if(user && user.permissions.includes("reports")){
             placeholder="Select Shop"
             className="w-10/12 p-2 text-xl text-white bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 border h-12 border-slate-600 rounded-lg shadow-lg transform transition-all duration-200 hover:shadow-xl active:shadow-md bg-boxdark"
           >
-            <option value="">All Shops</option>
+            <option value="all">All Shops</option>
             {shops && shops.length > 0 && shops.map((s, key) => (
               <option key={key} value={s._id}>{s.shopName}</option>
+            ))}
+          </select>
+          
+          <select
+            value={selectedCustomer}
+            onChange={async (e) => {
+              setSelectedCustomer(e.target.value);
+            }}
+            placeholder="Select Customer"
+            className="w-10/12 p-2 text-xl text-white bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 border h-12 border-slate-600 rounded-lg shadow-lg transform transition-all duration-200 hover:shadow-xl active:shadow-md bg-boxdark"
+          >
+            <option value="all">All Customers</option>
+            {customers && customers.length > 0 && customers.map((c, key) => (
+              <option key={key} value={c._id}>{c.customerName} - {c.customerMobileNumber}</option>
+            ))}
+          </select>
+          
+          <select
+            value={selectedSupplier}
+            onChange={async (e) => {
+              setSelectedSupplier(e.target.value);
+            }}
+            placeholder="Select Supplier"
+            className="w-10/12 p-2 text-xl text-white bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 border h-12 border-slate-600 rounded-lg shadow-lg transform transition-all duration-200 hover:shadow-xl active:shadow-md bg-boxdark"
+          >
+            <option value="all">All Suppliers</option>
+            {suppliers && suppliers.length > 0 && suppliers.map((s, key) => (
+              <option key={key} value={s._id}>{s.customerName} - {s.customerMobileNumber}</option>
             ))}
           </select>
           <select

@@ -1,15 +1,11 @@
 "use client";
 import apiaddress from "@/apirequests/apiaddress";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastParser } from "@/apirequests/getcustomersbyshopid";
-import Head from "next/head";
 import { useState } from "react";
-import Menu from "@/components/Menu";
 import { useGlobalState } from "@/js/globaluser";
-import LoginPage from "@/app/authentication/login/page";
 
 const Page = () => {
   const {user} = useGlobalState()
@@ -57,10 +53,10 @@ const Page = () => {
     }
   };
 
-  const backupDatabase = async () => {
+  const sendBackup = async () => {
     setLoading(true);
     try {
-      let data = await fetch(apiaddress + "/database/backupdatabase",{
+      let data = await fetch(apiaddress + "/email/sendbackupemail",{
         method:"GET",
         headers:{
           token
@@ -68,24 +64,20 @@ const Page = () => {
       });
       let parsed = await data.json();
       const next = () => {
-        console.log("Backup completed");
+        console.log("hello");
       };
       await toastParser(parsed, next);
     } catch (error) {
-      console.error("Error creating backup:", error);
-      setMessage("An error occurred while creating the backup.");
+      console.error("Error sending backup:", error);
+      setMessage("An error occurred while sending the backup.");
     } finally {
       setLoading(false);
     }
   };
-if(user && user.permissions.includes("dayclose")){
-  return (
-    <Menu>
-      <Head>
-        <title>Database Backup</title>
-      </Head>
 
-      <DefaultLayout>
+  return (
+    <>
+
         <ToastContainer />
         <div className="mx-auto max-w-270">
           <Breadcrumb pageName="Database Backup" />
@@ -103,12 +95,12 @@ if(user && user.permissions.includes("dayclose")){
                 <div className="flex justify-between space-x-4">
                   <button
                     className="border-green-500 border-2 w-full rounded-md shadow-lg p-5 text-white font-bold text-xl hover:scale-110 transform transition-transform duration-200 bg-gradient-to-r from-green-500 to-green-700"
-                    onClick={backupDatabase}
+                    onClick={sendBackup}
                   >
-                    Backup Database
+                    Send Backup Email
                   </button>
                 </div>
-                {user.permissions.includes("loaddatafromfile") &&
+
                 <div className="mt-8">
                   <form onSubmit={handleSubmit} className="flex flex-col items-center">
                     <input
@@ -126,7 +118,7 @@ if(user && user.permissions.includes("dayclose")){
                     </button>
                   </form>
                 </div>
-                }
+                
               </div>
             )}
 
@@ -143,14 +135,9 @@ if(user && user.permissions.includes("dayclose")){
             </div>
           </div>
         </div>
-      </DefaultLayout>
-    </Menu>
+    </>
   );
-}else{
-  return(
-    <LoginPage />
-  )
-}
+
 };
 
 export default Page;

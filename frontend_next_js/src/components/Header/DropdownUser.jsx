@@ -4,14 +4,17 @@ import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
 import { useGlobalState } from "@/js/globaluser";
 import apiaddress from "@/apirequests/apiaddress";
+import { useRouter } from "next/navigation";
 
 const DropdownUser = () => {
   const {user,setUser} = useGlobalState()
+  const router = useRouter()
   const [dropdownOpen, setDropdownOpen] = useState(false);
   
   const handleLogout = async ()=>{
     localStorage.removeItem('token')
-    setUser(undefined)
+    setUser(null)
+    router.push('/')
   }
 
 

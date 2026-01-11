@@ -1,18 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { FaUserShield, FaFingerprint } from "react-icons/fa";
+import { FaUserShield } from "react-icons/fa";
 import apiaddress from "@/apirequests/apiaddress";
 import { motion } from "framer-motion"; // For animation effects
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGlobalState } from '@/js/globaluser';
-import CameraView from '@/components/CameraView'
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user, setUser, authMethod, setAuthMethod } = useGlobalState(); // Access the global state
+  const { user, setUser } = useGlobalState(); // Access the global state
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login process
   const [fallDown, setFallDown] = useState(false); // For "unstick and fall down" effect
 
@@ -67,7 +66,7 @@ const LoginPage = () => {
         <h1 className="text-4xl font-bold mb-8">Login</h1>
 
 
-       {authMethod==='credentials' ?(<form onSubmit={handleLogin} className="w-full max-w-md">
+       <form onSubmit={handleLogin} className="w-full max-w-md">
           <div className="mb-4">
             <input
               type="email"
@@ -97,27 +96,7 @@ const LoginPage = () => {
           >
             {isLoggingIn ? "Logging in..." : "Login"}
           </button>
-        </form>):(
-          <div className="w-3/4">
-            <CameraView />
-          </div>
-        )}
-
-            <h2 className="text-left text-xl mt-7 ml-0">Login Method</h2>
-        <div className="flex justify-between w-full max-w-md mt-4">
-      <button
-        className={`flex-1 flex items-center justify-center p-4 border rounded-lg transition-all ${authMethod === "credentials" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
-        onClick={() => setAuthMethod("credentials")}
-      >
-        <FaUserShield className="mr-2" /> Credentials
-      </button>
-      <button
-        className={`flex-1 flex items-center justify-center p-4 border rounded-lg transition-all ml-2 ${authMethod === "faceid" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
-        onClick={() => setAuthMethod("faceid")}
-      >
-        <FaFingerprint className="mr-2" /> FaceID
-      </button>
-    </div>
+        </form>
       </motion.div>
     </div>
   );

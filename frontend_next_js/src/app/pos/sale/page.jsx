@@ -728,6 +728,10 @@ const Page = () => {
     }, [customer])
     useEffect(() => {
         const initializeData = async () => {
+            if (!user || !user._id) {
+                return;
+            }
+            
             try {
                 const shopData = await fetchShops();
                 setShops(shopData);
@@ -767,7 +771,7 @@ const Page = () => {
         return () => document.removeEventListener('keydown', enter);
 
         // Adding dependencies
-    }, [selectedDate]);
+    }, [selectedDate, user]);
     useEffect(() => {
         calculation().then(e => {
             setFinalTotals(e);
@@ -1004,44 +1008,98 @@ const Page = () => {
                                     </div>
                                     {selectedShopToFinal &&
                                         selectedShopToFinal.shopPayments.map((payment, index) => (
-                                            <div key={index} className="flex text-green-600">
-                                                <h3 className="text-xl font-bold border-b-2 mb-2 p-2 border-blue-600 w-1/2">
-                                                    {payment.name}
-                                                </h3>
-                                                <input
-                                                    type="text"
-                                                    className="text-xl bg-transparent outline-none font-bold border-b-2 mb-2 p-2 border-blue-600 w-1/2"
-                                                    value={payment.amount}
-                                                    onChange={(e) => {
-                                                        const updatedPayments = [...selectedShopToFinal.shopPayments];
-                                                        const newAmount = Number(e.target.value);
+                                            <div key={index} className="mb-4">
+                                                <div className="flex text-green-600">
+                                                    <h3 className="text-xl font-bold border-b-2 mb-2 p-2 border-blue-600 w-1/2">
+                                                        {payment.name}
+                                                    </h3>
+                                                    <input
+                                                        type="text"
+                                                        className="text-xl bg-transparent outline-none font-bold border-b-2 mb-2 p-2 border-blue-600 w-1/2"
+                                                        value={payment.amount}
+                                                        onChange={(e) => {
+                                                            const updatedPayments = [...selectedShopToFinal.shopPayments];
+                                                            const newAmount = Number(e.target.value);
 
-                                                        if (!isNaN(newAmount)) {
-                                                            // Update the specific payment amount
-                                                            updatedPayments[index] = { ...payment, amount: newAmount };
+                                                            if (!isNaN(newAmount)) {
+                                                                // Update the specific payment amount
+                                                                updatedPayments[index] = { ...payment, amount: newAmount };
 
-                                                            // Calculate the new paid amount by summing up all payment amounts
-                                                            const newPaidAmount = updatedPayments.reduce(
-                                                                (total, payment) => total + payment.amount,
-                                                                0
-                                                            );
+                                                                // Calculate the new paid amount by summing up all payment amounts
+                                                                const newPaidAmount = updatedPayments.reduce(
+                                                                    (total, payment) => total + payment.amount,
+                                                                    0
+                                                                );
 
-                                                            // Create a new updated shop object
-                                                            const updatedShop = {
-                                                                ...selectedShopToFinal,
-                                                                shopPayments: updatedPayments,
-                                                                paidamount: newPaidAmount,
-                                                            };
+                                                                // Create a new updated shop object
+                                                                const updatedShop = {
+                                                                    ...selectedShopToFinal,
+                                                                    shopPayments: updatedPayments,
+                                                                    paidamount: newPaidAmount,
+                                                                };
 
-                                                            // Update the selectedShopToFinal state
-                                                            setSelectedShopToFinal(updatedShop);
+                                                                // Update the selectedShopToFinal state
+                                                                setSelectedShopToFinal(updatedShop);
 
-                                                            // Update the balanceTotal array
-                                                            updateBalanceTotal2(updatedShop);
+                                                                // Update the balanceTotal array
+                                                                updateBalanceTotal2(updatedShop);
 
-                                                        }
-                                                    }}
-                                                />
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                                {payment.name === "Debit" && (
+                                                    <div className="ml-4 space-y-2">
+                                                        <div className="flex items-center text-white">
+                                                            <label className="text-sm w-1/2">Days to Clear:</label>
+                                                            <input
+                                                                type="number"
+                                                                className="text-sm bg-boxdark border border-blue-600 outline-none p-2 rounded w-1/2"
+                                                                placeholder="Enter days"
+                                                                value={payment.daysToClear || ""}
+                                                                onChange={(e) => {
+                                                                    const updatedPayments = [...selectedShopToFinal.shopPayments];
+                                                                    updatedPayments[index] = { 
+                                                                        ...payment, 
+                                                                        daysToClear: Number(e.target.value) || 0 
+                                                                    };
+
+                                                                    const updatedShop = {
+                                                                        ...selectedShopToFinal,
+                                                                        shopPayments: updatedPayments,
+                                                                    };
+
+                                                                    setSelectedShopToFinal(updatedShop);
+                                                                    updateBalanceTotal2(updatedShop);
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <div className="flex items-center text-white">
+                                                            <label className="text-sm w-1/2">Remarks (Optional):</label>
+                                                            <input
+                                                                type="text"
+                                                                className="text-sm bg-boxdark border border-blue-600 outline-none p-2 rounded w-1/2"
+                                                                placeholder="Add remarks"
+                                                                value={payment.remarks || ""}
+                                                                onChange={(e) => {
+                                                                    const updatedPayments = [...selectedShopToFinal.shopPayments];
+                                                                    updatedPayments[index] = { 
+                                                                        ...payment, 
+                                                                        remarks: e.target.value 
+                                                                    };
+
+                                                                    const updatedShop = {
+                                                                        ...selectedShopToFinal,
+                                                                        shopPayments: updatedPayments,
+                                                                    };
+
+                                                                    setSelectedShopToFinal(updatedShop);
+                                                                    updateBalanceTotal2(updatedShop);
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                     <div className="flex">

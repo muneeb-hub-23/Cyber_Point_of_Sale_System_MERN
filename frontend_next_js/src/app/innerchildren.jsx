@@ -37,14 +37,14 @@ export default function InnerRootLayout({ children }) {
         .catch((error) => {
           console.error("Token verification failed:", error);
           localStorage.removeItem("token"); // Clear token if verification fails
-          
+          router.push('/')
         })
         .finally(() => {
           // Stop the loading state after the verification process
           setLoading(false);
         });
     }
-  }, [user]);
+  }, []);
 
   return (
     <html lang="en">
