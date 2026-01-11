@@ -1,0 +1,44 @@
+database connected
+server is running
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2Nzg0Mzc4OSwiZXhwIjoxNzY3ODg2OTg5fQ.kohQ36DnFOWhTu1VElHTkDuBR7EZ_iqbO34qK9Dium8',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}

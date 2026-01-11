@@ -22,20 +22,32 @@ function convertDateFormat(dateString) {
     }
 }
 function convertToDateFormat(dateInput) {
-    // Parse the input into a Date object
+    if (!dateInput) {
+        throw new Error("Invalid date");
+    }
+    if (typeof dateInput === 'string') {
+        const trimmed = dateInput.trim();
+        if (/^\d{8}$/.test(trimmed)) {
+            // already in yyyymmdd
+            return trimmed;
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+            // yyyy-mm-dd -> yyyymmdd
+            return trimmed.replace(/-/g, '');
+        }
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
+            // dd/mm/yyyy -> yyyymmdd
+            const [dd, mm, yyyy] = trimmed.split('/');
+            return `${yyyy}${mm}${dd}`;
+        }
+    }
     const date = new Date(dateInput);
-
-    // Check if the date is valid
     if (isNaN(date)) {
         throw new Error("Invalid date");
     }
-
-    // Extract year, month, and day from the date
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() is 0-indexed, so add 1
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-
-    // Return in yyyymmdd format
     return `${year}${month}${day}`;
 }
 function getDateRange({ sdate, edate }) {
@@ -104,21 +116,22 @@ router.get('/', async (req, res) => {
         let totalPaidMoney = cashRegisterEntries.reduce((accumulator, currentEntry) => {
             if(currentEntry.shop.toString() === shops[shop]._id.toString() && currentEntry.type === "paidmoney"){
 
+                const amt = Number(currentEntry.amount) || 0;
                 if (currentEntry.method === "debit") {
-                    debitPaidMoney += currentEntry.amount
+                    debitPaidMoney += amt
                 } else if (currentEntry.method === "cash") {
-                    cashPaidMoney += currentEntry.amount
+                    cashPaidMoney += amt
                 } else if (currentEntry.method === "easypaisa") {
-                    easypaisaPaidMoney += currentEntry.amount
+                    easypaisaPaidMoney += amt
                 } else if (currentEntry.method === "jazzcash") {
-                    jazzcashPaidMoney += currentEntry.amount
+                    jazzcashPaidMoney += amt
                 } else if (currentEntry.method === "upaisa") {
-                    upaisaPaidMoney += currentEntry.amount
+                    upaisaPaidMoney += amt
                 } else if (currentEntry.method === "meezan") {
-                    meezanPaidMoney += currentEntry.amount
+                    meezanPaidMoney += amt
                 }
 
-                return accumulator + currentEntry.amount;
+                return accumulator + amt;
             }else{
                 return accumulator;
             }
@@ -134,30 +147,28 @@ router.get('/', async (req, res) => {
         let wasoolthroughcounter = 0;
         let totalAmount = cashRegisterEntries.reduce((accumulator, currentEntry) => {
             if(currentEntry.shop.toString() === shops[shop]._id.toString() && currentEntry.type === "wasool"){
-
+                const amt = Number(currentEntry.amount) || 0;
                 if(currentEntry.transactionCollectedFrom === "salesman"){
-                    wasoolthroughsalesman+= currentEntry.amount
+                    wasoolthroughsalesman+= amt
                 }else{
-                    wasoolthroughcounter += currentEntry.amount
+                    wasoolthroughcounter += amt
                 }
 
                 if (currentEntry.method === "debit") {
-                    debitWasooli += currentEntry.amount
+                    debitWasooli += amt
                 } else if (currentEntry.method === "cash") {
-                    cashWasooli += currentEntry.amount
+                    cashWasooli += amt
                 } else if (currentEntry.method === "easypaisa") {
-                    easypaisaWasooli += currentEntry.amount
+                    easypaisaWasooli += amt
                 } else if (currentEntry.method === "jazzcash") {
-                    jazzcashWasooli += currentEntry.amount
+                    jazzcashWasooli += amt
                 } else if (currentEntry.method === "upaisa") {
-                    upaisaWasooli += currentEntry.amount
+                    upaisaWasooli += amt
                 } else if (currentEntry.method === "meezan") {
-                    meezanWasooli += currentEntry.amount
+                    meezanWasooli += amt
                 }
 
-
-
-                return accumulator + currentEntry.amount;
+                return accumulator + amt;
             }else{
                 return accumulator;
             }
@@ -188,21 +199,21 @@ router.get('/', async (req, res) => {
             let currentDoc = todayDocs[sale]
             // console.log(currentDoc.linkedShop,shops[shop]._id)
             if (currentDoc.linkedShop.toString() === shops[shop]._id.toString() && currentDoc.doctype === "sale") {
-                saleTotal += currentDoc.amountpaid
+                saleTotal += (Number(currentDoc.amountpaid) || 0)
                 for (let payment in currentDoc.payment) {
                     let currentPayment = currentDoc.payment[payment]
                     if (currentPayment.name === "Debit") {
-                        debitSale += currentPayment.amount
+                        debitSale += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Cash") {
-                        cashSale += currentPayment.amount
+                        cashSale += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Easypaisa") {
-                        easypaisaSale += currentPayment.amount
+                        easypaisaSale += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Jazzcash") {
-                        jazzcashSale += currentPayment.amount
+                        jazzcashSale += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Upaisa") {
-                        upaisaSale += currentPayment.amount
+                        upaisaSale += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Meezan") {
-                        meezanSale += currentPayment.amount
+                        meezanSale += (Number(currentPayment.amount) || 0)
                     }
                 }
             }
@@ -220,21 +231,21 @@ router.get('/', async (req, res) => {
         for (let purchase of todayDocs) {
 
             if (purchase.linkedShop.toString() === shops[shop]._id.toString() && purchase.doctype === "purchase") {
-                purchaseTotal += purchase.amountpaid
+                purchaseTotal += (Number(purchase.amountpaid) || 0)
                 for (let payment in purchase.payment) {
                     let currentPayment = purchase.payment[payment]
                     if (currentPayment.name === "Debit") {
-                        debitpurchase += currentPayment.amount
+                        debitpurchase += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Cash") {
-                        cashpurchase += currentPayment.amount
+                        cashpurchase += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Easypaisa") {
-                        easypaisapurchase += currentPayment.amount
+                        easypaisapurchase += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Jazzcash") {
-                        jazzcashpurchase += currentPayment.amount
+                        jazzcashpurchase += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Upaisa") {
-                        upaisapurchase += currentPayment.amount
+                        upaisapurchase += (Number(currentPayment.amount) || 0)
                     } else if (currentPayment.name === "Meezan") {
-                        meezanpurchase += currentPayment.amount
+                        meezanpurchase += (Number(currentPayment.amount) || 0)
                     }
                 }
             }

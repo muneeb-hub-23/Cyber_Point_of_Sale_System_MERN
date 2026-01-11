@@ -1,0 +1,47 @@
+{
+  "_id": {
+    "$oid": "670e01a19ff52e839cf61acd"
+  },
+  "username": "Muhammad Muneeb Baig",
+  "email": "muneebbaig200@gmail.com",
+  "password": "$2b$10$KO6czkfXMhey4Q0P4p4lv.i0vNDZD0V6v.lXBQcWkXqk1CfEJsJMq",
+  "shops": [
+    {
+      "_id": "6703f27f5e7930ca9c3aa669",
+      "shopName": "Shop 2 Khata",
+      "customers": 16,
+      "lenehain": 1503763,
+      "denehain": 0,
+      "createdAt": "2024-10-07T14:38:55.445Z",
+      "updatedAt": "2024-10-12T04:04:44.889Z",
+      "__v": 0
+    },
+    {
+      "_id": "66fabdcb4b2b9081a705bb1a",
+      "shopName": "Shop 1 Khata",
+      "customers": 118,
+      "lenehain": 8618681,
+      "denehain": 197288,
+      "createdAt": "2024-09-30T15:03:39.682Z",
+      "updatedAt": "2024-10-12T15:31:31.253Z",
+      "__v": 0
+    }
+  ],
+  "job": "Normal User",
+  "permissions": [
+    "dashboard",
+    "reports",
+    "deleteshop",
+    "deleteuser"
+  ],
+  "profilepicture": "/images/userprofilepicture/1728971169226.jpg",
+  "rfid": "",
+  "fingerprint": "",
+  "createdAt": {
+    "$date": "2024-10-15T05:46:09.326Z"
+  },
+  "updatedAt": {
+    "$date": "2024-10-15T05:46:09.326Z"
+  },
+  "__v": 0
+}

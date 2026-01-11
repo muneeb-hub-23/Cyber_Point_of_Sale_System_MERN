@@ -44,15 +44,17 @@ const Page = () => {
         setFilteredProducts(filtered);
     };
     const handleChange = (e,category)=>{
+        console.log(products[0])
         if(category==='customer'){
             setSelectedCustomer(e)
             if(e===undefined){
                 setFilteredProducts(products)
                 return
             }
-
             const filtered = products.filter((item) => {
-                    return item.suplier._id === e._id;
+                    const pid = item && item.suplier && item.suplier._id ? String(item.suplier._id) : '';
+                    const eid = e && e._id ? String(e._id) : '';
+                    return pid === eid;
             });
             setFilteredProducts(filtered);
 

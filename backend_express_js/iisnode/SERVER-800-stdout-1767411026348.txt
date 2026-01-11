@@ -1,0 +1,132 @@
+database connected
+server is running
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc0MTEwMzUsImV4cCI6MTc2NzQ1NDIzNX0.6vKY1SY_2RooN6uimj6yBRNc555Ho4CF0xl82o2hcAw',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2NzQxMTA1MCwiZXhwIjoxNzY3NDU0MjUwfQ.jsm-Fk-jy1SlwviF-3qGHNrlBKnGomDtQ7R5vY2T-8I',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc0MTY4MDEsImV4cCI6MTc2NzQ2MDAwMX0.H3MLWs_4eiCuRuGx4d2CYcYG3zIRa9etND73UyhllNY',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+Product history updated and quantities adjusted successfully.
+Product history updated and quantities adjusted successfully.
+[
+  new ObjectId('679b49dc15d1c8f2976034fc'),
+  new ObjectId('679b49dc15d1c8f297603505'),
+  new ObjectId('679b49dc15d1c8f29760350d'),
+  new ObjectId('679b49dc15d1c8f297603515'),
+  new ObjectId('66fff4cd85aed3133f4401ef')
+]
+[
+  new ObjectId('6777bb86192fed63e8cb6f5d'),
+  new ObjectId('675e6096167d90c5b2017766'),
+  new ObjectId('6794cb9be6299c323dc38919'),
+  new ObjectId('679c9cff2b2489f4f748c9bc'),
+  new ObjectId('679c9d042b2489f4f748cf14')
+]
+Product history updated and quantities adjusted successfully.
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc0MTY4MDEsImV4cCI6MTc2NzQ2MDAwMX0.H3MLWs_4eiCuRuGx4d2CYcYG3zIRa9etND73UyhllNY',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60062-PfnvIA4W4lz/gaLJJ6BwZTW0QOk"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc0MTY4MDEsImV4cCI6MTc2NzQ2MDAwMX0.H3MLWs_4eiCuRuGx4d2CYcYG3zIRa9etND73UyhllNY',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60062-PfnvIA4W4lz/gaLJJ6BwZTW0QOk"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc0MTY4MDEsImV4cCI6MTc2NzQ2MDAwMX0.H3MLWs_4eiCuRuGx4d2CYcYG3zIRa9etND73UyhllNY',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+Product history updated and products adjusted successfully.
+[
+  new ObjectId('67a637e695d96dc54ba6936e'),
+  new ObjectId('67a637e695d96dc54ba69372'),
+  new ObjectId('67a637e695d96dc54ba69375'),
+  new ObjectId('67a637e695d96dc54ba69379'),
+  new ObjectId('67a637e795d96dc54ba6937c')
+]
+Product history updated and products adjusted successfully.
+{
+  _id: '679dbbc6a7d0f4fdb27ac7a6',
+  customerName: 'NANA BUT CHANI LAHORE ',
+  customerMobileNumber: 3000000000,
+  leneHain: 0,
+  deneHain: 0,
+  balance: -109386.2,
+  customerType: 'supplier',
+  customerCnic: null,
+  customerEmail: '',
+  customerAddress: '',
+  linkedShop: '676a7aab8ef2d5e6b5a492a6',
+  status: true,
+  createdAt: '2025-02-01T06:14:30.503Z',
+  updatedAt: '2025-09-01T07:24:55.488Z',
+  __v: 0,
+  verified: false
+}

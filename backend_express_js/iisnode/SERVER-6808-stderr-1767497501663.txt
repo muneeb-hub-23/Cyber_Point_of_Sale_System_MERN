@@ -1,0 +1,32 @@
+(node:6808) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6808) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+Error fetching transactions: CastError: Cast to ObjectId failed for value "undefined" (type string) at path "currentCustomer.linkedShop" for model "transactions"
+    at SchemaObjectId.cast (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\schema\objectId.js:250:11)
+    at SchemaType.applySetters (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\schemaType.js:1236:12)
+    at SchemaType.castForQuery (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\schemaType.js:1653:17)
+    at cast (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\cast.js:375:32)
+    at Query.cast (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:4857:12)
+    at Query._castConditions (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:2265:10)
+    at model.Query._find (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:2292:8)
+    at model.Query.exec (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:4401:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async D:\Cyber_POS\cyber_pos_backend\Application\routes\transactions\GetTransactions.js:13:26 {
+  stringValue: '"undefined"',
+  messageFormat: undefined,
+  kind: 'ObjectId',
+  value: 'undefined',
+  path: 'currentCustomer.linkedShop',
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId (D:\Cyber_POS\cyber_pos_backend\node_modules\bson\lib\bson.cjs:2362:23)
+      at castObjectId (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\cast\objectid.js:25:12)
+      at SchemaObjectId.cast (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\schema\objectId.js:248:12)
+      at SchemaType.applySetters (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\schemaType.js:1236:12)
+      at SchemaType.castForQuery (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\schemaType.js:1653:17)
+      at cast (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\cast.js:375:32)
+      at Query.cast (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:4857:12)
+      at Query._castConditions (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:2265:10)
+      at model.Query._find (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:2292:8)
+      at model.Query.exec (D:\Cyber_POS\cyber_pos_backend\node_modules\mongoose\lib\query.js:4401:80),
+  valueType: 'string'
+}

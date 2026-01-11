@@ -1,0 +1,96 @@
+From https://github.com/muneebbaigdev/cyber_khata_backend
+ * branch            main       -> FETCH_HEAD
+   bb21fd3..ea42155  main       -> origin/main
+Updating bb21fd3..ea42155
+Fast-forward
+ info.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 info.txt
+Updating repository in C:\Users\muneeb\Desktop\cyber_khata\cyber_khata_backend 
+---------------------------------------- 
+Cleaning repository... 
+HEAD is now at ea42155 Create info.txt
+Updating backend repository in C:\Users\muneeb\Desktop\cyber_khata\cyber_khata_backend 
+---------------------------------------- 
+Cleaning backend repository... 
+error: unable to unlink old 'update_log.txt': Invalid argument
+fatal: Could not reset index file to revision 'HEAD'.
+Removing images/
+Backend repository cleaned successfully. 
+Pulling updates from the backend repository... 
+From https://github.com/muneebbaigdev/cyber_khata_backend
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+Backend repository updated successfully. 
+Installing backend dependencies... 
+Updating backend repository in C:\Users\muneeb\Desktop\cyber_khata\cyber_khata_backend 
+---------------------------------------- 
+Cleaning backend repository... 
+error: unable to unlink old 'update_log.txt': Invalid argument
+fatal: Could not reset index file to revision 'HEAD'.
+Removing images/
+Backend repository cleaned successfully. 
+Pulling updates from the backend repository... 
+From https://github.com/muneebbaigdev/cyber_khata_backend
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+Backend repository updated successfully. 
+Installing backend dependencies... 
+
+added 1 package, and audited 216 packages in 8s
+
+23 packages are looking for funding
+  run `npm fund` for details
+
+6 vulnerabilities (3 low, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+HEAD is now at 0616d06 some fixes
+Removing images/
+Backend repository cleaned successfully. 
+Pulling updates from the backend repository... 
+From https://github.com/muneebbaigdev/cyber_khata_backend
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+Backend repository updated successfully. 
+Installing backend dependencies... 
+
+up to date, audited 216 packages in 1s
+
+23 packages are looking for funding
+  run `npm fund` for details
+
+6 vulnerabilities (3 low, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+Updating backend repository in C:\Users\muneeb\Desktop\cyber_khata\cyber_khata_backend 
+---------------------------------------- 
+Cleaning backend repository... 
+error: unable to unlink old 'update_log.txt': Invalid argument
+fatal: Could not reset index file to revision 'HEAD'.
+Removing images/
+Backend repository cleaned successfully. 
+Pulling updates from the backend repository... 
+From https://github.com/muneebbaigdev/cyber_khata_backend
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+Backend repository updated successfully. 
+Installing backend dependencies... 
+
+up to date, audited 216 packages in 2s
+
+23 packages are looking for funding
+  run `npm fund` for details
+
+6 vulnerabilities (3 low, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.

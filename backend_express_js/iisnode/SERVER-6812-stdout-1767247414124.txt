@@ -1,0 +1,23 @@
+database connected
+server is running
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2NzIzNzIwNiwiZXhwIjoxNzY3MjgwNDA2fQ.YQNant4JXtNcX9xmGriXlvR7-TOtQ-Zw5C08SrSfns8',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+[
+  new ObjectId('68b535636904b7b68cad71ce'),
+  new ObjectId('68b535636904b7b68cad71d2'),
+  new ObjectId('68b535636904b7b68cad71d6'),
+  new ObjectId('68b535636904b7b68cad71db'),
+  new ObjectId('68b535636904b7b68cad71de')
+]

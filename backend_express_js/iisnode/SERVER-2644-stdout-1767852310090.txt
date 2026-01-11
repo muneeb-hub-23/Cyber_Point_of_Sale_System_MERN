@@ -1,0 +1,744 @@
+database connected
+server is running
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2Nzg0Mzc4OSwiZXhwIjoxNzY3ODg2OTg5fQ.kohQ36DnFOWhTu1VElHTkDuBR7EZ_iqbO34qK9Dium8',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60d87-xd1E7BF0eopYgLilcXXFRW0Q640"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60d87-xd1E7BF0eopYgLilcXXFRW0Q640"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+Product history updated and quantities adjusted successfully.
+[
+  new ObjectId('67cc215d9931c2f14e936b56'),
+  new ObjectId('67cc215d9931c2f14e936b5c'),
+  new ObjectId('67cc215d9931c2f14e936b60'),
+  new ObjectId('67cc215d9931c2f14e936b67'),
+  new ObjectId('67cc215d9931c2f14e936b6d')
+]
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+Product history updated and quantities adjusted successfully.
+Product history updated and quantities adjusted successfully.
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60d87-xd1E7BF0eopYgLilcXXFRW0Q640"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2Nzg0Mzc4OSwiZXhwIjoxNzY3ODg2OTg5fQ.kohQ36DnFOWhTu1VElHTkDuBR7EZ_iqbO34qK9Dium8',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzM2OTAsImV4cCI6MTc2NzkxNjg5MH0.rk-DL03hMhi8I4T3qffQBLLpOMoswYY79jYA9FxjIpE',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzM2OTAsImV4cCI6MTc2NzkxNjg5MH0.rk-DL03hMhi8I4T3qffQBLLpOMoswYY79jYA9FxjIpE',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzM4MjQsImV4cCI6MTc2NzkxNzAyNH0.t0tbeNQTH9pPbkkBMJ5K1PdTCq5AamfrCPPWigdRfXQ',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzM4MjQsImV4cCI6MTc2NzkxNzAyNH0.t0tbeNQTH9pPbkkBMJ5K1PdTCq5AamfrCPPWigdRfXQ',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzM4NzUsImV4cCI6MTc2NzkxNzA3NX0.yTzARkKDEAc_qHKUMl9WNommtQYQkH81TO8UX_R4jrI',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+[
+  new ObjectId('67962be89d52d1cd4a795e7d'),
+  new ObjectId('6703f3bf5e7930ca9c3aa67b'),
+  new ObjectId('6777ba2b192fed63e8caaa6f'),
+  new ObjectId('67924207529c5670ff01c162'),
+  new ObjectId('67962c739d52d1cd4a7a13fc')
+]
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzM4NzUsImV4cCI6MTc2NzkxNzA3NX0.yTzARkKDEAc_qHKUMl9WNommtQYQkH81TO8UX_R4jrI',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzQ3OTYsImV4cCI6MTc2NzkxNzk5Nn0.ejRd4SQ7xtQbZaBfZPEXYQnibcvrBSscwG-OCWWo2xA',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzQ3OTYsImV4cCI6MTc2NzkxNzk5Nn0.ejRd4SQ7xtQbZaBfZPEXYQnibcvrBSscwG-OCWWo2xA',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzQ4NTQsImV4cCI6MTc2NzkxODA1NH0.npC0LA_JVoTVZ7s0_m4ugXNKMaAZmgffWxDXojtNBVM',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzQ4NTQsImV4cCI6MTc2NzkxODA1NH0.npC0LA_JVoTVZ7s0_m4ugXNKMaAZmgffWxDXojtNBVM',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzQ5MTIsImV4cCI6MTc2NzkxODExMn0._X8dLqwnRP_dAzhwrvf2NHEBFagSLx9GIy9hbXzI63o',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzQ5MTIsImV4cCI6MTc2NzkxODExMn0._X8dLqwnRP_dAzhwrvf2NHEBFagSLx9GIy9hbXzI63o',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2Nzg3NDk5OSwiZXhwIjoxNzY3OTE4MTk5fQ.tvg54V7xD549d4DeYuwPuQ-kSLMF39XA84ZrIDVxbs4',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzUwMDYsImV4cCI6MTc2NzkxODIwNn0.JD4XegIIl78qGcYpxANoTP-e8J70G7CIF_ur0RA7Idw',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUyMzYsImV4cCI6MTc2Nzg4ODQzNn0.E9GII2V6yjAzgAWsM74RWw9ng9XIy4UEbsJRAzud5uo',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NzUwMDYsImV4cCI6MTc2NzkxODIwNn0.JD4XegIIl78qGcYpxANoTP-e8J70G7CIF_ur0RA7Idw',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2Nzg3OTM0OCwiZXhwIjoxNzY3OTIyNTQ4fQ.5tDJoH2otQ5dcWlDUG80M_O6ZUMaM_uuCnE0xrNRIFA',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlM2ViOTFlOWJlMWEzNjdlZjhmM2EiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5QGdtYWlsLmNvbSIsImlhdCI6MTc2Nzg3OTM0OCwiZXhwIjoxNzY3OTIyNTQ4fQ.5tDJoH2otQ5dcWlDUG80M_O6ZUMaM_uuCnE0xrNRIFA',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4ODE0MjEsImV4cCI6MTc2NzkyNDYyMX0.42qskB7mwlHBJYktI8bj15RsrmJrfUZAoQIxJ1p4tCQ',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTg2NzVjZGJlMmExYzIwMmVhZDAiLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5M0BnbWFpbC5jb20iLCJpYXQiOjE3Njc4ODE0MjEsImV4cCI6MTc2NzkyNDYyMX0.42qskB7mwlHBJYktI8bj15RsrmJrfUZAoQIxJ1p4tCQ',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'null',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-US,en;q=0.9',
+  host: '172.16.100.1:4000',
+  'if-none-match': 'W/"60928-nRoBHES0N7/wTeQK8/itXM6yKT4"',
+  referer: 'http://localhost/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4ODE1MzEsImV4cCI6MTc2NzkyNDczMX0.PbZbfOyXIw-Wx_z5tKQ8BuHw7Vs55fVdFb8LPv8eKFA',
+  origin: 'http://localhost',
+  'x-original-url': '/customers/getblacklist'
+}
+{
+  connection: 'keep-alive',
+  'content-length': '0',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  host: '172.16.100.1:4000',
+  referer: 'http://172.16.100.1/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  shopid: '66fabdcb4b2b9081a705bb1a',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzczYTdhYjVjZGJlMmExYzIwMjVjYzciLCJlbWFpbCI6Im1hcndhdGNyb2NrZXJ5MkBnbWFpbC5jb20iLCJpYXQiOjE3Njc4NDUzMTEsImV4cCI6MTc2Nzg4ODUxMX0.TOcEoPDwf4rOA40wep5dROW_2v_qpuhZqFnZUaBjJm8',
+  origin: 'http://172.16.100.1',
+  'x-original-url': '/customers/getblacklist'
+}

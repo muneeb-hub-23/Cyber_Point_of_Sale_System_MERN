@@ -151,7 +151,7 @@ const ModifyDeleteCustomerGroupForm = () => {
             <div className="mb-5">
               <select
                 name="linkedShop"
-                onChange={(e) => fetchCustomers(e.target.value, customerType)}
+                onChange={(e) => {fetchCustomers(e.target.value, customerType); setSelectedShop(e.target.value)}}
                 value={selectedShop || ""}
                 className="w-full rounded border-2 border-slate-400 p-3 bg-boxdark"
               >
