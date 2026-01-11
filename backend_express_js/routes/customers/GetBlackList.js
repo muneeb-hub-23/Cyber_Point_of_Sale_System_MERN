@@ -21,15 +21,21 @@ router.get('/', async (req, res) => {
             };
         }));
 
-        // Filter customers whose last transaction is more than 30 days old
+        // Filter customers whose last transaction is more than 30 days old AND have non-zero balance
         const thirtyDaysAgo = moment().subtract(30, 'days');
         customerData = customerData.filter(data => {
             const lastTransactionDate = data.lastTransaction.date 
                 ? moment(data.lastTransaction.date, 'YYYYMMDD') 
                 : null;
             
-            // Only include customers if their last transaction is older than 30 days
-            return !lastTransactionDate || lastTransactionDate.isBefore(thirtyDaysAgo);
+            // Check if last transaction is older than 30 days (or no transaction exists)
+            const hasOldOrNoTransaction = !lastTransactionDate || lastTransactionDate.isBefore(thirtyDaysAgo);
+            
+            // Check if either leneHain or deneHain is non-zero
+            const hasOutstandingAmount = data.customer.leneHain !== 0 || data.customer.deneHain !== 0;
+            
+            // Only include customers if both conditions are met
+            return hasOldOrNoTransaction && hasOutstandingAmount;
         });
 
         // Sort customers based on the most recent transaction date
