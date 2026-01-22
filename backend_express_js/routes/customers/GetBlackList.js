@@ -2,53 +2,61 @@ const express = require('express');
 const router = express.Router();
 const Customer = require('../../models/Customer');
 const Transaction = require('../../models/Transaction');
-const moment = require('moment'); // Import moment for date manipulation
+const moment = require('moment');
 
 router.get('/', async (req, res) => {
-    console.log(req.headers)
     try {
-        // Fetch all customers for the given shop
-        let customers = await Customer.find({ linkedShop: req.headers.shopid });
+        // Find customers with non-zero balance for the given shop
+        const customers = await Customer.find({ 
+            linkedShop: req.headers.shopid,
+            balance: { $ne: 0 }  // Only include customers with non-zero balance
+        });
 
-        // Fetch the last transaction for each customer
-        let customerData = await Promise.all(customers.map(async (customer) => {
-            let lastTransaction = await Transaction.findOne({ "currentCustomer._id": customer._id })
-                .sort({ date: -1 }); // Sort by date descending to get the latest transaction
+        // Get the last transaction for each customer using createdAt timestamp
+        const customerData = await Promise.all(customers.map(async (customer) => {
+            const lastTransaction = await Transaction.findOne({ 
+                'currentCustomer._id': customer._id.toString()
+            }).sort({ createdAt: -1 });
 
             return {
-                customer,
-                lastTransaction: lastTransaction || {}, // If no transaction found, return an empty object
+                customer: {
+                    ...customer._doc,
+                    // Use the balance field directly
+                    currentBalance: customer.balance
+                },
+                lastTransaction: lastTransaction || null,
+                lastTransactionDate: lastTransaction ? new Date(lastTransaction.createdAt) : null
             };
         }));
 
-        // Filter customers whose last transaction is more than 30 days old AND have non-zero balance
-        const thirtyDaysAgo = moment().subtract(30, 'days');
-        customerData = customerData.filter(data => {
-            const lastTransactionDate = data.lastTransaction.date 
-                ? moment(data.lastTransaction.date, 'YYYYMMDD') 
-                : null;
+        // Filter customers whose last transaction is more than 30 days old
+        const thirtyDaysAgo = moment().subtract(30, 'days').startOf('day');
+        const filteredCustomers = customerData.filter(data => {
+            // If no transaction, include if they have balance
+            if (!data.lastTransactionDate) return true;
             
-            // Check if last transaction is older than 30 days (or no transaction exists)
-            const hasOldOrNoTransaction = !lastTransactionDate || lastTransactionDate.isBefore(thirtyDaysAgo);
-            
-            // Check if either leneHain or deneHain is non-zero
-            const hasOutstandingAmount = data.customer.leneHain !== 0 || data.customer.deneHain !== 0;
-            
-            // Only include customers if both conditions are met
-            return hasOldOrNoTransaction && hasOutstandingAmount;
+            // Include if last transaction is older than 30 days
+            return moment(data.lastTransactionDate).isBefore(thirtyDaysAgo);
         });
 
-        // Sort customers based on the most recent transaction date
-        customerData.sort((a, b) => {
-            const aLastTransactionDate = a.lastTransaction.date ? moment(a.lastTransaction.date, 'YYYYMMDD') : moment().subtract(100, 'years'); // Set old default if no transaction
-            const bLastTransactionDate = b.lastTransaction.date ? moment(b.lastTransaction.date, 'YYYYMMDD') : moment().subtract(100, 'years'); // Set old default if no transaction
-
-            // Sort by most recent transaction (later date comes first)
-            return bLastTransactionDate.diff(aLastTransactionDate);
+        // Sort by last transaction date (oldest first) and then by balance (highest first)
+        filteredCustomers.sort((a, b) => {
+            // Handle customers without transactions (put them at the end)
+            if (!a.lastTransactionDate && !b.lastTransactionDate) {
+                return Math.abs(b.customer.currentBalance) - Math.abs(a.customer.currentBalance);
+            }
+            if (!a.lastTransactionDate) return 1;
+            if (!b.lastTransactionDate) return -1;
+            
+            // Sort by date first (oldest first)
+            const dateDiff = a.lastTransactionDate - b.lastTransactionDate;
+            if (dateDiff !== 0) return dateDiff;
+            
+            // If same date, sort by absolute balance (highest first)
+            return Math.abs(b.customer.currentBalance) - Math.abs(a.customer.currentBalance);
         });
 
-        // Send the sorted customer data
-        res.json(customerData.reverse());
+        res.json(filteredCustomers);
 
     } catch (err) {
         console.error(err);
