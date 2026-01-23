@@ -18,11 +18,13 @@ router.get('/', async (req, res) => {
                 'currentCustomer._id': customer._id.toString()
             }).sort({ createdAt: -1 });
 
+            // Ensure balance is a valid number, default to 0 if not
+            const balance = typeof customer.balance === 'number' ? customer.balance : 0;
+            
             return {
                 customer: {
                     ...customer._doc,
-                    // Use the balance field directly
-                    currentBalance: customer.balance
+                    currentBalance: balance
                 },
                 lastTransaction: lastTransaction || null,
                 lastTransactionDate: lastTransaction ? new Date(lastTransaction.createdAt) : null
