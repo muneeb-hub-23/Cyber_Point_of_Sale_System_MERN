@@ -10,7 +10,7 @@ const useColorMode = () => {
     }
   }, []);
 
-  return [colorMode, () => {}];
+  return [colorMode, (_value: string) => {}];
 };
 
 export default useColorMode;
