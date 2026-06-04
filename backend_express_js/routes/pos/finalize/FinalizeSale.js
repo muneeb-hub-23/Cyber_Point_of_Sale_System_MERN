@@ -31,10 +31,28 @@ router.post('/', async (req, res) => {
       balanceTotal,
 
     } = req.body
+
+    // --- Idempotency guard ---
+    // If already processed, return success immediately (safe retry)
+    const existingDoc = await Document.findById(selectedBill._id)
+    if (!existingDoc) return res.status(404).json({ success: false, message: 'Document not found' })
+    if (existingDoc.status === 'processed') {
+      return res.json({ success: true, alreadyProcessed: true })
+    }
+
+    // Atomically claim the document for processing — only one request wins
+    const claimed = await Document.findOneAndUpdate(
+      { _id: selectedBill._id, status: { $in: ['open', 'draw'] } },
+      { status: 'processing' },
+      { new: false }
+    )
+    if (!claimed) {
+      return res.status(409).json({ success: false, message: 'Document is already being processed or was already finalized' })
+    }
+
     if(customerGroup){
       customerGroup = await CustomerGroup.findById(customerGroup._id).populate("ids.shopID").populate("ids.customerID")
     }
-    await Document.findByIdAndUpdate(selectedBill._id,{status:"draw"})
     let allItems = await DocItem.find({document:selectedBill._id}).populate('product')
     let documentsToProcess = [];
 
@@ -187,6 +205,17 @@ router.post('/', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error in transaction processing:', error);
+    // Reset document back to open so it can be retried cleanly
+    try {
+      if (req.body && req.body.selectedBill && req.body.selectedBill._id) {
+        await Document.findOneAndUpdate(
+          { _id: req.body.selectedBill._id, status: 'processing' },
+          { status: 'open' }
+        )
+      }
+    } catch (rollbackErr) {
+      console.error('Rollback failed:', rollbackErr)
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 });

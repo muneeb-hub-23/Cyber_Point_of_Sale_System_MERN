@@ -26,6 +26,8 @@ const Page = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [searchType, setSearchType] = useState('barcode');
+    const [recalibratingAll, setRecalibratingAll] = useState(false);
+    const [recalibProgress, setRecalibProgress] = useState(null);
     const searchRef = useRef(null);
     const totalCost = useMemo(() => {
         return filteredProducts.reduce((sum, product) => sum + (product.cost * product.onHand), 0);
@@ -83,6 +85,49 @@ const Page = () => {
         }
     };
 
+    const recalibrateAllStock = () => {
+        if (!confirm('This will recalibrate OnHand stock for ALL products across all shops. Continue?')) return
+        setRecalibratingAll(true)
+        setRecalibProgress({ total: 0, done: 0, remaining: 0, currentProduct: '', finished: false, error: null })
+
+        const es = new EventSource(`${apiaddress}/management/products/recalibrateallstock`)
+
+        es.onmessage = (e) => {
+            const data = JSON.parse(e.data)
+            if (data.type === 'start') {
+                setRecalibProgress(p => ({ ...p, total: data.total, remaining: data.total }))
+            } else if (data.type === 'progress') {
+                setRecalibProgress(p => ({
+                    ...p,
+                    total: data.total,
+                    done: data.done,
+                    remaining: data.remaining,
+                    currentProduct: data.productName
+                }))
+            } else if (data.type === 'done') {
+                setRecalibProgress(p => ({ ...p, finished: true, currentProduct: '' }))
+                setRecalibratingAll(false)
+                es.close()
+                if (selectedShop) {
+                    fetchProducts(selectedShop._id).then(updated => {
+                        setProducts(updated)
+                        setFilteredProducts(updated)
+                    })
+                }
+            } else if (data.type === 'error') {
+                setRecalibProgress(p => ({ ...p, error: data.message, finished: true }))
+                setRecalibratingAll(false)
+                es.close()
+            }
+        }
+
+        es.onerror = () => {
+            setRecalibProgress(p => ({ ...p, error: 'Connection lost', finished: true }))
+            setRecalibratingAll(false)
+            es.close()
+        }
+    }
+
     const handleshopchange = (e)=>{
         localStorage.setItem('selectedshop',e.target.value)
         setSelectedShop(shops.find(f=>f._id===e.target.value))
@@ -126,7 +171,7 @@ const Page = () => {
         })
     }, []);
 if(user && user.permissions.includes("stock")){
-    return (
+    return (<>
         <Menu>
         <DefaultLayout>
             <div className="mx-auto max-w-270">
@@ -149,6 +194,15 @@ if(user && user.permissions.includes("stock")){
                         <div className="w-1/2">
                             <Searchoption data={customers} setData={setSelectedCustomer} onChange={(e)=>{handleChange(e,'customer')}} type="customer" />
                         </div>
+                    </div>
+                    <div className="flex justify-end px-2 pb-2">
+                        <button
+                            onClick={recalibrateAllStock}
+                            disabled={recalibratingAll}
+                            className='px-4 py-2 rounded-md bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold border border-orange-400 transition-colors text-sm'
+                        >
+                            {recalibratingAll ? 'Recalibrating...' : 'Recalibrate All Shops Items Stock'}
+                        </button>
                     </div>
                 </div>
                 <div className="rounded-sm flex border mb-5 shadow-lg border-stroke w-full text-center items-center bg-white dark:border-strokedark dark:bg-boxdark">
@@ -219,7 +273,58 @@ if(user && user.permissions.includes("stock")){
             </div>
         </DefaultLayout>
         </Menu>
-    );
+
+        {/* Recalibrate Progress Popup */}
+        {recalibProgress && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-70">
+                <div className="bg-boxdark border border-blue-600 rounded-xl shadow-2xl p-8 w-full max-w-md flex flex-col items-center space-y-5">
+                    <h2 className="text-white text-xl font-bold">Recalibrating Stock</h2>
+
+                    {/* Progress bar */}
+                    <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
+                        <div
+                            className="h-4 rounded-full bg-orange-500 transition-all duration-300"
+                            style={{ width: recalibProgress.total > 0 ? `${(recalibProgress.done / recalibProgress.total) * 100}%` : '0%' }}
+                        />
+                    </div>
+
+                    {/* Counts */}
+                    <div className="flex w-full justify-between text-sm font-semibold">
+                        <span className="text-blue-400">Total: <span className="text-white">{recalibProgress.total}</span></span>
+                        <span className="text-green-400">Done: <span className="text-white">{recalibProgress.done}</span></span>
+                        <span className="text-orange-400">Remaining: <span className="text-white">{recalibProgress.remaining}</span></span>
+                    </div>
+
+                    {/* Current product */}
+                    {!recalibProgress.finished && recalibProgress.currentProduct && (
+                        <p className="text-slate-300 text-sm text-center truncate w-full">
+                            Processing: <span className="text-white font-medium">{recalibProgress.currentProduct}</span>
+                        </p>
+                    )}
+
+                    {/* Error */}
+                    {recalibProgress.error && (
+                        <p className="text-red-400 text-sm text-center">{recalibProgress.error}</p>
+                    )}
+
+                    {/* Done state */}
+                    {recalibProgress.finished && !recalibProgress.error && (
+                        <p className="text-green-400 font-semibold text-center">All {recalibProgress.total} products recalibrated successfully!</p>
+                    )}
+
+                    {/* Close button — only when finished */}
+                    {recalibProgress.finished && (
+                        <button
+                            onClick={() => setRecalibProgress(null)}
+                            className="mt-2 px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors"
+                        >
+                            Close
+                        </button>
+                    )}
+                </div>
+            </div>
+        )}
+    </>);
 }else{
     return(
         <LoginPage />

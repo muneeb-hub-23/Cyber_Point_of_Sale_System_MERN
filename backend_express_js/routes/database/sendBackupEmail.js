@@ -20,65 +20,76 @@ const Shop = require('../../models/Shop')
 const Transaction = require('../../models/Transaction')
 const Users = require('../../models/User')
 
-router.get('/',async (req,res)=>{
-try{
-let cashregister = await CashRegister.find()
-let category = await Category.find()
-let counter = await Counter.find()
-let customers = await Customer.find()
-let customersgroups = await CustomerGroup.find()
-let documentitem = await DocumentItem.find()
-let documentnumber = await DocumentNumber.find()
-let documents = await Documents.find()
-let history = await History.find()
-let paymentmethods = await PaymentMethods.find()
-let products = await Products.find()
-let producthistory = await ProductHistory.find()
-let saletypes = await SaleTypes.find()
-let shops = await Shop.find()
-let transactions = await Transaction.find()
-let users = await Users.find()
+const COLLECTIONS = [
+    { key: 'cashregister',    Model: CashRegister,   label: 'Cash Register' },
+    { key: 'category',        Model: Category,        label: 'Categories' },
+    { key: 'counter',         Model: Counter,         label: 'Counters' },
+    { key: 'customers',       Model: Customer,        label: 'Customers' },
+    { key: 'customersgroups', Model: CustomerGroup,   label: 'Customer Groups' },
+    { key: 'documentitem',    Model: DocumentItem,    label: 'Document Items' },
+    { key: 'documentnumber',  Model: DocumentNumber,  label: 'Document Numbers' },
+    { key: 'documents',       Model: Documents,       label: 'Documents' },
+    { key: 'history',         Model: History,         label: 'History' },
+    { key: 'paymentmethods',  Model: PaymentMethods,  label: 'Payment Methods' },
+    { key: 'products',        Model: Products,        label: 'Products' },
+    { key: 'producthistory',  Model: ProductHistory,  label: 'Product History' },
+    { key: 'saletypes',       Model: SaleTypes,       label: 'Sale Types' },
+    { key: 'shops',           Model: Shop,            label: 'Shops' },
+    { key: 'transactions',    Model: Transaction,     label: 'Transactions' },
+    { key: 'users',           Model: Users,           label: 'Users' },
+]
 
-let data = {
-    cashregister,
-    category,
-    counter,
-    customers,
-    customersgroups,
-    documentitem,
-    documentnumber,
-    documents,
-    history,
-    paymentmethods,
-    products,
-    producthistory,
-    saletypes,
-    shops,
-    transactions,
-    users
-}
+const send = (res, payload) => res.write(`data: ${JSON.stringify(payload)}\n\n`)
 
-var token = jwt.sign(data, 'Hello@123');
+router.get('/', async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+    res.flushHeaders()
 
-// Save backup to file
-const backupFolder = path.join(__dirname, '../../database_files');
-if (!fs.existsSync(backupFolder)) {
-    fs.mkdirSync(backupFolder, { recursive: true });
-}
+    const total = COLLECTIONS.length
+    const startTime = Date.now()
+    const data = {}
 
-const currentDateTime = new Date().toISOString().replace(/:/g, '-');
-const fileName = `backup_${currentDateTime}.txt`;
-const filePath = path.join(backupFolder, fileName);
+    try {
+        for (let i = 0; i < COLLECTIONS.length; i++) {
+            const { key, Model, label } = COLLECTIONS[i]
+            data[key] = await Model.find()
 
-fs.writeFileSync(filePath, token);
+            const done = i + 1
+            const elapsed = Math.round((Date.now() - startTime) / 1000)
+            const avgPerStep = elapsed / done
+            const remaining = Math.round(avgPerStep * (total - done))
 
-res.json({success:true,message:"Database backup created successfully"})
-}catch(err){
-    console.log(err)
-    res.json({success:false,message:"Failed to create database backup"})
-}
+            send(res, {
+                step: done,
+                total,
+                percent: Math.round((done / total) * 100),
+                label: `Reading: ${label}`,
+                elapsed,
+                remaining,
+                done: false,
+            })
+        }
 
+        const token = jwt.sign(data, 'Hello@123')
+
+        const backupFolder = path.join(__dirname, '../../database_files')
+        if (!fs.existsSync(backupFolder)) fs.mkdirSync(backupFolder, { recursive: true })
+
+        const currentDateTime = new Date().toISOString().replace(/:/g, '-')
+        const fileName = `backup_${currentDateTime}.txt`
+        const filePath = path.join(backupFolder, fileName)
+        fs.writeFileSync(filePath, token)
+
+        const elapsed = Math.round((Date.now() - startTime) / 1000)
+        send(res, { step: total, total, percent: 100, label: 'Backup saved successfully!', elapsed, remaining: 0, done: true, fileName })
+    } catch (err) {
+        console.error(err)
+        send(res, { error: true, message: err.message || 'Backup failed' })
+    } finally {
+        res.end()
+    }
 })
-
 
 module.exports = router

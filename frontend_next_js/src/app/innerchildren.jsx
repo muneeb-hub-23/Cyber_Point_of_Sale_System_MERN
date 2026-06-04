@@ -47,7 +47,7 @@ export default function InnerRootLayout({ children }) {
   }, []);
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <title>Cyber POS</title>
         <meta
@@ -57,7 +57,7 @@ export default function InnerRootLayout({ children }) {
         <link rel="icon" href="/images/logo/logo.ico" sizes="any" />
       </head>
       <body suppressHydrationWarning={true}>
-        <div className="dark:bg-boxdark-2 dark:text-bodydark">
+        <div className="bg-boxdark-2 text-bodydark">
           {loading ? <Loader /> : children}
         </div>
       </body>

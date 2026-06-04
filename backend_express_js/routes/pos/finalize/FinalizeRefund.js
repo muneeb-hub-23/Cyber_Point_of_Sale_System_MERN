@@ -43,6 +43,21 @@ router.post('/', async (req, res) => {
 
     const fdate = formatDate3(date);
 
+    // --- Idempotency guard ---
+    const existingDoc = await Document.findById(selectedBill._id)
+    if (!existingDoc) return res.status(404).json({ success: false, message: 'Document not found' })
+    if (existingDoc.status === 'processed') {
+      return res.json({ success: true, alreadyProcessed: true })
+    }
+    const claimed = await Document.findOneAndUpdate(
+      { _id: selectedBill._id, status: { $in: ['open', 'draw'] } },
+      { status: 'processing' },
+      { new: false }
+    )
+    if (!claimed) {
+      return res.status(409).json({ success: false, message: 'Document is already being processed or was already finalized' })
+    }
+
     // Convert values to numbers
     paidamount = Number(paidamount);
     totalSum = Number(totalSum);
@@ -87,6 +102,16 @@ router.post('/', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error in transaction processing:', error);
+    try {
+      if (req.body && req.body.selectedBill && req.body.selectedBill._id) {
+        await Document.findOneAndUpdate(
+          { _id: req.body.selectedBill._id, status: 'processing' },
+          { status: 'open' }
+        )
+      }
+    } catch (rollbackErr) {
+      console.error('Rollback failed:', rollbackErr)
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 });

@@ -46,6 +46,7 @@ const Page = () => {
     const searchRef = useRef(null)
     const [searchType, setSearchType] = useState('barcode')
     const [openFinalize, setOpenFinalize] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
     const [quantitySelecting, setQuantitySelecting] = useState(false)
     const [quantityChanging, setQuantityChanging] = useState(false)
     const quantityinput = useRef(null)
@@ -658,6 +659,7 @@ const Page = () => {
         }
     };
     const handleFinalize = async () => {
+        if (isSaving) return
         let xsm = false
         for (let i of balanceTotal) {
             const totalAmount = i.shopPayments.reduce((sum, payment) => sum + payment.amount, 0);
@@ -678,7 +680,10 @@ const Page = () => {
                 balanceTotal,
             }
             setSelectedShopToFinal(undefined)
-            let data = await fetch(apiaddress + '/pos/finalize/finalizesale', {
+            setIsSaving(true)
+            let data
+            try {
+              data = await fetch(apiaddress + '/pos/finalize/finalizesale', {
                 method: "POST",
                 headers: {
                     'content-type': 'application/json',
@@ -686,6 +691,11 @@ const Page = () => {
                 },
                 body: JSON.stringify(finalObject)
             })
+              } catch (networkErr) {
+                toast.error('Network error — please try again')
+                setIsSaving(false)
+                return
+              }
             let parsed = await data.json()
             if (parsed.success) {
                 setOpenFinalize(false)
@@ -714,6 +724,7 @@ const Page = () => {
             } else {
                 toast.error(parsed.message)
             }
+            setIsSaving(false)
         } else {
             toast.error("The Paid Amount Should Be Equal To Total Bill Amount")
         }
@@ -1186,7 +1197,7 @@ const Page = () => {
                                     <div className='w-full flex space-x-8 justify-between'>
 
                                         <button className='w-6/12 p-3 my-5 rounded-md hover:scale-110 bg-blue-600 text-white font-bold text-xl px-8 flex justify-between items-center' onClick={fetchReceipt}><MdReceipt className='text-2xl text-white' />Print (p)</button>
-                                        <button className='w-6/12 p-3 my-5 rounded-md hover:scale-110 bg-green-600 text-white font-bold text-xl' onClick={handleFinalize}>Process (enter)</button>
+                                        <button className={`w-6/12 p-3 my-5 rounded-md bg-green-600 text-white font-bold text-xl ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`} onClick={handleFinalize} disabled={isSaving}>{isSaving ? 'Processing...' : 'Process (enter)'}</button>
                                     </div>
                                 </div>
 

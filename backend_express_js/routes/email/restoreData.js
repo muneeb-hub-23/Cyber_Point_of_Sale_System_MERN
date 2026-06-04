@@ -20,78 +20,90 @@ const Shop = require('../../models/Shop')
 const Transaction = require('../../models/Transaction')
 const Users = require('../../models/User')
 
-// Configure multer for file upload
-const upload = multer({ dest: 'public/uploads/' }); // Directory for temporary file storage
+const upload = multer({ dest: 'public/uploads/' })
 
-// Secret key for decoding JWT (make sure this matches the key used to sign the JWT)
-const JWT_SECRET = 'Hello@123';
+const COLLECTIONS = [
+    { key: 'cashregister',    Model: CashRegister,   label: 'Cash Register' },
+    { key: 'category',        Model: Category,        label: 'Categories' },
+    { key: 'counter',         Model: Counter,         label: 'Counters' },
+    { key: 'customers',       Model: Customer,        label: 'Customers' },
+    { key: 'customersgroups', Model: CustomerGroup,   label: 'Customer Groups' },
+    { key: 'documentitem',    Model: DocumentItem,    label: 'Document Items' },
+    { key: 'documentnumber',  Model: DocumentNumber,  label: 'Document Numbers' },
+    { key: 'documents',       Model: Documents,       label: 'Documents' },
+    { key: 'history',         Model: History,         label: 'History' },
+    { key: 'paymentmethods',  Model: PaymentMethods,  label: 'Payment Methods' },
+    { key: 'products',        Model: Products,        label: 'Products' },
+    { key: 'producthistory',  Model: ProductHistory,  label: 'Product History' },
+    { key: 'saletypes',       Model: SaleTypes,       label: 'Sale Types' },
+    { key: 'shops',           Model: Shop,            label: 'Shops' },
+    { key: 'transactions',    Model: Transaction,     label: 'Transactions' },
+    { key: 'users',           Model: Users,           label: 'Users' },
+]
 
-// POST route for file upload and database restoration
+const send = (res, payload) => res.write(`data: ${JSON.stringify(payload)}\n\n`)
+
 router.post('/', upload.single('backupFile'), async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+    res.flushHeaders()
+
+    const total = COLLECTIONS.length * 2  // delete pass + insert pass
+    const startTime = Date.now()
+    let step = 0
+
+    const progress = (label) => {
+        step++
+        const elapsed = Math.round((Date.now() - startTime) / 1000)
+        const avgPerStep = step > 0 ? elapsed / step : 0
+        const remaining = Math.round(avgPerStep * (total - step))
+        send(res, {
+            step,
+            total,
+            percent: Math.round((step / total) * 100),
+            label,
+            elapsed,
+            remaining,
+            done: false,
+        })
+    }
+
     try {
-        // Step 1: Handle the uploaded file (the file contains the JWT token)
-        const filePath = req.file.path;
+        const filePath = req.file.path
+        const token = await fs.readFile(filePath, 'utf-8')
 
-        // Step 2: Read the uploaded JWT token file
-        const token = await fs.readFile(filePath, 'utf-8');
-
-        // Step 3: Decode the JWT token to get the backup data
-        let backupData;
+        let backupData
         try {
-            backupData = jwt.verify(token, "Hello@123");  // Verify and decode the JWT token
-        } catch (error) {
-            throw new Error('Invalid JWT token');
+            backupData = jwt.verify(token, 'Hello@123')
+        } catch (e) {
+            send(res, { error: true, message: 'Invalid backup file' })
+            res.end(); return
         }
 
-        // Step 4: Remove old data from the database
+        // Delete pass
+        for (const { Model, label } of COLLECTIONS) {
+            await Model.deleteMany({})
+            progress(`Clearing: ${label}`)
+        }
 
-        await CashRegister.deleteMany({})
-        await Category.deleteMany({})
-        await Counter.deleteMany({})
-        await CustomerGroup.deleteMany({})
-        await Customer.deleteMany({})
-        await DocumentItem.deleteMany({})
-        await DocumentNumber.deleteMany({})
-        await Documents.deleteMany({})
-        await History.deleteMany({})
-        await PaymentMethods.deleteMany({})
-        await Products.deleteMany({})
-        await ProductHistory.deleteMany({})
-        await SaleTypes.deleteMany({})
-        await Shop.deleteMany({})
-        await Transaction.deleteMany({})
-        await Users.deleteMany({})
+        // Insert pass
+        for (const { key, Model, label } of COLLECTIONS) {
+            const records = backupData[key]
+            if (records && records.length > 0) await Model.insertMany(records)
+            progress(`Restoring: ${label}`)
+        }
 
+        await fs.unlink(filePath)
 
-        // Step 5: Write the new data from the decoded JWT token to the database
-
-        await CashRegister.insertMany(backupData.cashregister)
-        await Category.insertMany(backupData.category)
-        await Counter.insertMany(backupData.counter)
-        await Customer.insertMany(backupData.customers)
-        await CustomerGroup.insertMany(backupData.customersgroups)
-        await DocumentItem.insertMany(backupData.documentitem)
-        await DocumentNumber.insertMany(backupData.documentnumber)
-        await Documents.insertMany(backupData.documents)
-        await History.insertMany(backupData.history)
-        await PaymentMethods.insertMany(backupData.paymentmethods)
-        await Products.insertMany(backupData.products)
-        await ProductHistory.insertMany(backupData.producthistory)
-        await SaleTypes.insertMany(backupData.saletypes)
-        await Shop.insertMany(backupData.shops)
-        await Transaction.insertMany(backupData.transactions)
-        await Users.insertMany(backupData.users)
-
-
-
-        // Step 6: Cleanup - remove the uploaded file from the server
-        await fs.unlink(filePath);
-
-        res.json({ success: true, message: 'Database restored from backup successfully' });
+        const elapsed = Math.round((Date.now() - startTime) / 1000)
+        send(res, { step: total, total, percent: 100, label: 'Database restored successfully!', elapsed, remaining: 0, done: true })
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: err.message || 'Failed to restore data from backup' });
+        console.error(err)
+        send(res, { error: true, message: err.message || 'Restore failed' })
+    } finally {
+        res.end()
     }
-});
+})
 
 module.exports = router;

@@ -2,7 +2,7 @@ import { AiOutlineDashboard } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
 import { FaUserSecret } from "react-icons/fa6";
 import { MdAdd } from "react-icons/md";
-import { IoCloudUpload, IoHome } from "react-icons/io5";
+import { IoHome } from "react-icons/io5";
 import { FaPeopleRobbery } from "react-icons/fa6";
 import { TiWarning } from "react-icons/ti";
 import { TbHomeOff } from "react-icons/tb";
@@ -43,6 +43,7 @@ export const menuGroups = [
                     { label: "Products List", route: "/management/products", permission: "products" },
                     { label: "Modify Products", route: "/management/modifyproducts", permission: "modifyproducts" },
                     { label: "Products Stock", route: "/management/stock", permission: "stock" },
+                    { label: "Adjust Stock", route: "/management/adjuststock", permission: "adjuststock" },
                     { label: "Pending Products", route: "/management/pendingproducts", permission: "pendingproducts" },]
             },
             {
@@ -70,8 +71,7 @@ export const menuGroups = [
                     { label: "Modify User", route: "/users/modifyuser", permission: "modifyuser" },
                     { label: "Delete User", route: "/users/deleteuser", permission: "deleteuser" },]
             },
-            { icon: (<TbHomeOff className="text-2xl" />), label: "Day Close", route: "/dayclose", permission: "dayclose" },
-            { icon: (<IoCloudUpload className="text-2xl" />), label: "Software Update", route: "/updates", permission: "updates" },
+            { icon: (<TbHomeOff className="text-2xl" />), label: "Backup / Restore", route: "/dayclose", permission: "dayclose" },
 
 
         ],

@@ -12,6 +12,12 @@ router.use('/getproductentries',require('./getproductentries'))
 router.use('/getproductsbyshop',require('./getproductbyshop'))
 router.use('/uploadpictures',require('./uploadpictures'))
 router.use('/getallproducts',require('./getallproducts'))
+router.use('/recalibratestock',require('./recalibratestock'))
+router.use('/recalibrateallstock',require('./recalibrateallstock'))
+router.use('/createadjustrequest',require('./createadjustrequest'))
+router.use('/getadjustrequests',require('./getadjustrequests'))
+router.use('/approveadjustrequest',require('./approveadjustrequest'))
+router.use('/rejectadjustrequest',require('./rejectadjustrequest'))
 
 
 module.exports = router

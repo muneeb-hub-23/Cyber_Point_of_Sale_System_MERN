@@ -16,6 +16,7 @@ const Page = () => {
   const [docType, setDocType] = useState('all')
   const [productData, setProductData] = useState(undefined)
   const [productEntries, setProductEntries] = useState(undefined)
+  const [recalibrating, setRecalibrating] = useState(false)
   const beforeAfter = useMemo(() => {
     let data = [];
     let reference = 0;
@@ -93,6 +94,33 @@ const Page = () => {
     return parsed
   }
 
+  const recalibrateStock = async () => {
+    setRecalibrating(true)
+    try {
+      const res = await fetch(apiaddress + '/management/products/recalibratestock', {
+        method: 'POST',
+        headers: { id: productid }
+      })
+      const result = await res.json()
+      if (res.ok) {
+        // Refresh both product data and entries after recalibration
+        const [updatedProduct, updatedEntries] = await Promise.all([
+          getProductData(productid),
+          getProductEntries(productid)
+        ])
+        setProductData(updatedProduct)
+        setProductEntries(updatedEntries)
+        alert(`Recalibrated successfully. Final On Hand: ${result.finalOnHand} (${result.entriesProcessed} entries processed)`)
+      } else {
+        alert('Recalibration failed: ' + result.error)
+      }
+    } catch (err) {
+      alert('Error: ' + err.message)
+    } finally {
+      setRecalibrating(false)
+    }
+  }
+
   useEffect(() => {
     getProductData(productid).then(data => setProductData(data))
     getProductEntries(productid).then(data => setProductEntries(data))
@@ -161,6 +189,13 @@ const Page = () => {
         <div className='p-2 m-2 rounded-md bg-boxdark border-blue-600 border'>
           Customer
         </div>
+        <button
+          onClick={recalibrateStock}
+          disabled={recalibrating}
+          className='p-2 m-2 rounded-md bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold border border-orange-400 transition-colors'
+        >
+          {recalibrating ? 'Recalibrating...' : 'Recalibrate Stock'}
+        </button>
       </div>
       <div className='w-full'>
         <div className='flex items-center bg-blue-600 text-center text-white'>

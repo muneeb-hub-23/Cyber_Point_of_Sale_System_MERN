@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import { FiCalendar } from 'react-icons/fi'; // Import a calendar icon from react-icons
 import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for the date picker
-import CameraCapture from '../test/CameraModule';
 
 const DateTimeComponent = ({ selectedDate, setSelectedDate, currentTime,setCurrentTime,user }) => {
   // Function to update the current time every second
