@@ -33,6 +33,7 @@ const Page = () => {
     const [endDate, setEndDate] = useState(new Date())
     const [allUsers, setAllUsers] = useState(false)
     const [selectedShop, setSelectedShop] = useState('')
+    const [isSaving, setIsSaving] = useState(false)
     const [customersList, setcustomerslist] = useState([])
     const [hoveredRow, setHoveredRow] = useState(null)
 
@@ -229,41 +230,57 @@ const Page = () => {
     };
 
     const deleteBill = async () => {
+        if (isSaving) return
         if (selectedDoc) {
-            let verify = confirm("Type delete to Delete Bill")
+            let verify = confirm("Are you sure you want to delete this bill?")
             if (verify) {
-                let data = await fetch(apiaddress + '/recentdocs/deletedoc', {
-                    method: "DELETE",
-                    headers: { docid: selectedDoc._id }
-                })
-                let parsed = await data.json()
-                if (parsed.success) {
-                    toast("Document Deleted")
-                    fetchData(startDate, endDate)
-                    setItemsList([])
-                    setSelectedDoc(null)  // Reset selected document after deletion
-                } else {
-                    toast.error("Document Not Deleted")
+                setIsSaving(true)
+                try {
+                    let data = await fetch(apiaddress + '/recentdocs/deletedoc', {
+                        method: "DELETE",
+                        headers: { docid: selectedDoc._id }
+                    })
+                    let parsed = await data.json()
+                    if (parsed.success) {
+                        toast("Document Deleted")
+                        fetchData(startDate, endDate)
+                        setItemsList([])
+                        setSelectedDoc(null)
+                    } else {
+                        toast.error(parsed.message || "Document Not Deleted")
+                    }
+                } catch (err) {
+                    toast.error('Network error — please try again')
+                } finally {
+                    setIsSaving(false)
                 }
             }
         }
     }
     const reverseProcessBill = async () => {
+        if (isSaving) return
         if (selectedDoc) {
             let verify = confirm("Are You Sure ?")
             if (verify) {
-                let data = await fetch(apiaddress + '/recentdocs/reverseprocess', {
-                    method: "POST",
-                    headers: { docid: selectedDoc._id }
-                })
-                let parsed = await data.json()
-                if (parsed.success) {
-                    toast("Document Reversed")
-                    fetchData(startDate, endDate)
-                    setItemsList([])
-                    setSelectedDoc(null)  // Reset selected document after deletion
-                } else {
-                    toast.error("Document Not Reversed")
+                setIsSaving(true)
+                try {
+                    let data = await fetch(apiaddress + '/recentdocs/reverseprocess', {
+                        method: "POST",
+                        headers: { docid: selectedDoc._id }
+                    })
+                    let parsed = await data.json()
+                    if (parsed.success) {
+                        toast("Document Reversed")
+                        fetchData(startDate, endDate)
+                        setItemsList([])
+                        setSelectedDoc(null)
+                    } else {
+                        toast.error(parsed.message || "Document Not Reversed")
+                    }
+                } catch (err) {
+                    toast.error('Network error — please try again')
+                } finally {
+                    setIsSaving(false)
                 }
             }
         }
@@ -361,16 +378,16 @@ const Page = () => {
                         </div>
 
 
-                        <div onClick={deleteBill} className="flex flex-col justify-center cursor-pointer bg-boxdark items-center p-2 w-1/12 hover:scale-110 transition-all">
-                            <label className="mb-3 block text-sm font-medium text-white dark:text-white">Delete</label>
+                        <div onClick={deleteBill} className={`flex flex-col justify-center cursor-pointer bg-boxdark items-center p-2 w-1/12 transition-all ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}>
+                            <label className="mb-3 block text-sm font-medium text-white dark:text-white">{isSaving ? 'Working...' : 'Delete'}</label>
                             <MdDeleteForever className='text-rose-600 text-6xl text-center' />
                         </div>
                         <div onClick={fetchReceipt} className="flex flex-col cursor-pointer justify-center bg-boxdark items-center p-2 w-1/12 hover:scale-110 transition-all">
                             <label className="mb-3 block text-sm font-medium text-white dark:text-white">Receipt</label>
                             <MdReceipt className='text-5xl pt-1 mx-auto text-white text-center' />
                         </div>
-                        <div onClick={reverseProcessBill} className="flex flex-col cursor-pointer justify-center bg-boxdark items-center p-2 w-1/12 hover:scale-110 transition-all">
-                            <label className="mb-3 block text-sm font-medium text-white dark:text-white">Reverse Process</label>
+                        <div onClick={reverseProcessBill} className={`flex flex-col cursor-pointer justify-center bg-boxdark items-center p-2 w-1/12 transition-all ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}>
+                            <label className="mb-3 block text-sm font-medium text-white dark:text-white">{isSaving ? 'Working...' : 'Reverse Process'}</label>
                             <RiArrowGoBackLine className='text-5xl pt-1 mx-auto text-white text-center' />
                         </div>
                     </div>

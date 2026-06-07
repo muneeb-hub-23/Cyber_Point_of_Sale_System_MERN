@@ -23,20 +23,30 @@ router.get('/', async (req, res) => {
         send({ type: 'start', total })
 
         let totalEntriesProcessed = 0
+        let totalOrphansDeleted = 0
         let productsProcessed = 0
 
         for (let i = 0; i < products.length; i++) {
             const product = products[i]
 
-            const entries = await DocItems.find({ product: product._id })
+            const allEntries = await DocItems.find({ product: product._id })
                 .populate('document')
                 .sort({ createdAt: 1 })
+
+            // Delete orphan entries whose parent document was deleted (old glitches)
+            const orphanIds = allEntries.filter(e => !e.document).map(e => e._id)
+            if (orphanIds.length > 0) {
+                await DocItems.deleteMany({ _id: { $in: orphanIds } })
+                totalOrphansDeleted += orphanIds.length
+            }
+
+            const entries = allEntries.filter(e => e.document)
 
             let runningOnHand = 0
 
             for (let entry of entries) {
-                const doctype = entry.document ? entry.document.doctype : null
-                const isAddition = doctype === 'purchase' || doctype === 'refund' || doctype === null
+                const doctype = entry.document.doctype
+                const isAddition = doctype === 'purchase' || doctype === 'refund'
                 const onHandBefore = runningOnHand
                 if (isAddition) {
                     runningOnHand += entry.qty
@@ -58,11 +68,12 @@ router.get('/', async (req, res) => {
                 remaining: total - productsProcessed,
                 total,
                 productName: product.name,
-                finalOnHand: runningOnHand
+                finalOnHand: runningOnHand,
+                orphansDeleted: orphanIds.length
             })
         }
 
-        send({ type: 'done', productsProcessed, entriesProcessed: totalEntriesProcessed })
+        send({ type: 'done', productsProcessed, entriesProcessed: totalEntriesProcessed, orphansDeleted: totalOrphansDeleted })
         res.end()
 
     } catch (err) {

@@ -8,54 +8,59 @@ const CashRegister = require('../../models/CashRegister')
 
 router.post('/', async (req, res) => {
     try {
-        let { currentCustomer, amount, trnsType,user, transactionType,method,date,transactionCollectedFrom } = req.body;
-        amount = Number(amount); // Ensure amount is treated as a number
+        let { currentCustomer, amount, trnsType, user, transactionType, method, date, transactionCollectedFrom } = req.body;
+        amount = Number(amount);
 
+        if (!currentCustomer || !currentCustomer._id || !trnsType || !amount || !method) {
+            return res.status(400).json({ success: false, error: 'Missing required fields' });
+        }
+
+        // Read customer and shop first — no writes yet
         const check = await Customer.findById(currentCustomer._id);
+        if (!check) return res.status(404).json({ success: false, error: 'Customer not found' });
         const shop = await Shop.findById(currentCustomer.linkedShop);
+        if (!shop) return res.status(404).json({ success: false, error: 'Shop not found' });
 
-        // Save history before the transaction
+        // Compute new balance before any writes
+        const oldBalance = check.balance;
+        const newBalance = trnsType === 'plus' ? oldBalance + amount : oldBalance - amount;
+
+        // Save history snapshot
         const { shopName, lenehain, denehain } = shop;
         const newHistory = new History({ shopName, lenehain, denehain });
         await newHistory.save();
-        let newEntry = new CashRegister({
-            user,
-            customer:currentCustomer._id,
-            date,
-            type:transactionType,
+
+        // Update customer balance atomically
+        await Customer.findByIdAndUpdate(currentCustomer._id, { balance: newBalance });
+
+        // Save transaction record
+        const transaction = new Transaction({
+            ...req.body,
             amount,
-            shop:currentCustomer.linkedShop,
-            method,
-            transactionCollectedFrom
-        })
-        await newEntry.save()
-        if (trnsType === 'plus') {
-
-            await Customer.findByIdAndUpdate(currentCustomer._id, { balance: check.balance+amount });
-            req.body.oldBalance = check.balance;
-            req.body.newBalance = check.balance+amount;
-
-        } else if (trnsType === 'minus') {
-
-            await Customer.findByIdAndUpdate(currentCustomer._id, { balance: check.balance-amount });
-            req.body.oldBalance = check.balance;
-            req.body.newBalance = check.balance-amount;
-
-        }
-
-        const transaction = new Transaction(req.body);
+            oldBalance,
+            newBalance
+        });
         await transaction.save();
 
-        // Update shop's leneHain and deneHain
+        // Save cash register entry
+        const newEntry = new CashRegister({
+            user,
+            customer: currentCustomer._id,
+            date,
+            type: transactionType,
+            amount,
+            shop: currentCustomer.linkedShop,
+            method,
+            transactionCollectedFrom
+        });
+        await newEntry.save();
+
+        // Recalculate shop totals from live customer data
         const customersArray = await Customer.find({ linkedShop: shop._id });
-        let totalLeneHain = 0;
-        let totalDeneHain = 0;
-        customersArray.forEach(customer => {
-           if(customer.balance>0){
-            totalLeneHain+= customer.balance
-           }else{
-            totalDeneHain+= customer.balance
-           }
+        let totalLeneHain = 0, totalDeneHain = 0;
+        customersArray.forEach(c => {
+            if (c.balance > 0) totalLeneHain += c.balance;
+            else totalDeneHain += c.balance;
         });
         await Shop.findByIdAndUpdate(currentCustomer.linkedShop, {
             lenehain: totalLeneHain,
@@ -63,11 +68,10 @@ router.post('/', async (req, res) => {
             customers: customersArray.length
         });
 
-        // Respond with success
-        res.send({ success: true, transaction });
+        res.json({ success: true, transaction });
     } catch (err) {
         console.error('Transaction error:', err);
-        res.send({ success: false, error: err.message });
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 

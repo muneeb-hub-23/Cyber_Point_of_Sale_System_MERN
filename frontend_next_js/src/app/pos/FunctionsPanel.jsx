@@ -119,7 +119,7 @@ const FunctionsPanel = ({ selected, setCustomerSelecting, customer, clearCustome
             <hr className='text-slate-500' />
 
             <button
-                onClick={() => { openFinalize(true); discref.current && discref.current.focus(); }}
+                onClick={() => { openFinalize(true); discref && discref.current && discref.current.focus(); }}
                 className={`text-3xl p-5 rounded-md w-10/12 mt-3 border-2 border-graydark bg-green-500 text-white font-bold hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300`}
             >
                 Finalize

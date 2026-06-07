@@ -3,10 +3,21 @@ import { formatDateTime, formatDateTime2 } from "@/apirequests/getcustomersbysho
 import Image from "next/image";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { handleDeleteTransaction } from "@/apirequests/getcustomersbyshopid";
+import { useState } from "react";
 
 const TableTwoCopy = ({ transactions, toast, next, hasMore,fetchmoredata, setCount }) => {
-  // The Infinite Scroll component needs the `next` function passed down through props
-  // which will fetch more data when the user scrolls.
+  const [deletingId, setDeletingId] = useState(null)
+
+  const handleDelete = async (tid) => {
+    if (deletingId) return
+    setDeletingId(tid)
+    try {
+      await handleDeleteTransaction(tid, toast, next)
+      setCount && setCount(Math.random())
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -102,8 +113,8 @@ const TableTwoCopy = ({ transactions, toast, next, hasMore,fetchmoredata, setCou
             <div className="col-span-1 text-center flex items-center">
               <Image
                 alt="delete icon"
-                className="mx-auto text-rose-500 cursor-pointer hover:transform hover:animate-bounce hover:scale-125"
-                onClick={() => { handleDeleteTransaction(transaction._id, toast, next); setCount(Math.random()) }}
+                className={`mx-auto text-rose-500 cursor-pointer hover:transform hover:animate-bounce hover:scale-125 ${deletingId === transaction._id ? 'opacity-40 pointer-events-none' : ''}`}
+                onClick={() => handleDelete(transaction._id)}
                 height={30}
                 width={30}
                 src="/images/icons/delete_icon.svg"

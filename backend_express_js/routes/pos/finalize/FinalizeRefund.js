@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
       return res.json({ success: true, alreadyProcessed: true })
     }
     const claimed = await Document.findOneAndUpdate(
-      { _id: selectedBill._id, status: { $in: ['open', 'draw'] } },
+      { _id: selectedBill._id, status: { $in: ['open', 'draw', 'pending'] } },
       { status: 'processing' },
       { new: false }
     )
@@ -106,7 +106,7 @@ router.post('/', async (req, res) => {
       if (req.body && req.body.selectedBill && req.body.selectedBill._id) {
         await Document.findOneAndUpdate(
           { _id: req.body.selectedBill._id, status: 'processing' },
-          { status: 'open' }
+          { status: 'pending' }
         )
       }
     } catch (rollbackErr) {

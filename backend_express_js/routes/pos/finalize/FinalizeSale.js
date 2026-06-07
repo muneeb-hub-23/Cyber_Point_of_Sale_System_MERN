@@ -32,20 +32,24 @@ router.post('/', async (req, res) => {
 
     } = req.body
 
+    console.log('[FinalizeSale] Request received, selectedBill._id:', selectedBill._id)
+
     // --- Idempotency guard ---
-    // If already processed, return success immediately (safe retry)
     const existingDoc = await Document.findById(selectedBill._id)
+    console.log('[FinalizeSale] existingDoc status:', existingDoc ? existingDoc.status : 'NOT FOUND')
     if (!existingDoc) return res.status(404).json({ success: false, message: 'Document not found' })
     if (existingDoc.status === 'processed') {
+      console.log('[FinalizeSale] Already processed, returning success')
       return res.json({ success: true, alreadyProcessed: true })
     }
 
-    // Atomically claim the document for processing — only one request wins
+    // Atomically claim the document for processing
     const claimed = await Document.findOneAndUpdate(
-      { _id: selectedBill._id, status: { $in: ['open', 'draw'] } },
+      { _id: selectedBill._id, status: { $in: ['open', 'draw', 'pending'] } },
       { status: 'processing' },
       { new: false }
     )
+    console.log('[FinalizeSale] Claim result:', claimed ? `claimed (was: ${claimed.status})` : 'FAILED - already processing/processed')
     if (!claimed) {
       return res.status(409).json({ success: false, message: 'Document is already being processed or was already finalized' })
     }
@@ -54,14 +58,16 @@ router.post('/', async (req, res) => {
       customerGroup = await CustomerGroup.findById(customerGroup._id).populate("ids.shopID").populate("ids.customerID")
     }
     let allItems = await DocItem.find({document:selectedBill._id}).populate('product')
+    console.log('[FinalizeSale] allItems count:', allItems.length)
     let documentsToProcess = [];
 
     for (let shop of balanceTotal) {
       shop = shop.shop
+      console.log('[FinalizeSale] Processing shop:', shop._id, shop.name)
       let count = 1
       let xip = await DocCounter.find()
       if (xip.length > 0) {
-        await DocCounter.updateMany({ $inc: { count: 1 } })
+        await DocCounter.updateMany({}, { $inc: { count: 1 } })
         count = xip[0].count
       } else {
         count = 1
@@ -86,6 +92,7 @@ router.post('/', async (req, res) => {
     }
 
     for(document of documentsToProcess){
+      console.log('[FinalizeSale] Processing document:', document._id, 'for shop:', document.linkedShop)
       let thisShopData = balanceTotal.find(b=>b.shop._id.toString()===document.linkedShop.toString())
       let customer = customerGroup ? customerGroup.ids.find(c=>c.shopID._id.toString()===document.linkedShop.toString()) : undefined
       if(customer){
@@ -137,6 +144,7 @@ router.post('/', async (req, res) => {
         }
       }
       await updateProductHistory();
+      console.log('[FinalizeSale] Product history updated for document:', document._id)
       let NewTransaction;
       // Insert new transaction if customer exists
       if (customer) {
@@ -202,19 +210,22 @@ router.post('/', async (req, res) => {
     }
 
 
+    console.log('[FinalizeSale] All done, sending success')
     res.json({ success: true });
   } catch (error) {
-    console.error('Error in transaction processing:', error);
+    console.error('[FinalizeSale] ERROR:', error.message)
+    console.error('[FinalizeSale] Stack:', error.stack)
     // Reset document back to open so it can be retried cleanly
     try {
       if (req.body && req.body.selectedBill && req.body.selectedBill._id) {
-        await Document.findOneAndUpdate(
+        const rollbackResult = await Document.findOneAndUpdate(
           { _id: req.body.selectedBill._id, status: 'processing' },
-          { status: 'open' }
+          { status: 'pending' }
         )
+        console.log('[FinalizeSale] Rollback result:', rollbackResult ? 'reset to pending' : 'doc was not in processing state')
       }
     } catch (rollbackErr) {
-      console.error('Rollback failed:', rollbackErr)
+      console.error('[FinalizeSale] Rollback failed:', rollbackErr)
     }
     res.status(500).json({ success: false, message: error.message });
   }

@@ -19,6 +19,7 @@ const KhataEntry = () => {
   const [clearCustomer, setClearCustomer] = useState(true)
   const [transactionCollectedFrom, setTransactionCollectedFrom] = useState("counter")
   const [trnscollected, settrnscollected] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const { user } = useGlobalState()
   const token = localStorage.getItem("token")
@@ -87,88 +88,48 @@ const KhataEntry = () => {
   }
 
   const doTransaction = async () => {
+    if (isSaving) return
 
     let trnsType = ""
     switch (transactionType) {
-      case "wasool":
-        trnsType = "minus";
-        break;
-      case "sale":
-        trnsType = "plus";
-        break;
-      case "paidmoney":
-        trnsType = "plus";
-        break;
-      case "purchase":
-        trnsType = "minus";
-        break;
-      case "refund":
-        trnsType = "minus";
-        break;
-      case "loss":
-        trnsType = "plus";
-        break;
-      case "stockreturn":
-        trnsType = "plus";
-        break;
+      case "wasool":     trnsType = "minus"; break;
+      case "sale":       trnsType = "plus";  break;
+      case "paidmoney": trnsType = "plus";  break;
+      case "purchase":  trnsType = "minus"; break;
+      case "refund":    trnsType = "minus"; break;
+      case "loss":      trnsType = "plus";  break;
+      case "stockreturn": trnsType = "plus"; break;
     }
 
-    if (trnsType !== "" && amount > 0 && currentCustomer && method !== "") {
+    if (trnsType !== "" && amount > 0 && currentCustomer && currentCustomer._id && method !== "") {
       let postData = { currentCustomer, transactionType, amount, trnsType, date: workingDate, method, user: user._id, transactionCollectedFrom }
       if (enabled) {
         postData.warning = { date: parseInt(warningDate), resolved: false, relation: transactionType, user: user._id }
       }
-      let data = await fetch(apiaddress + "/khata/khataentry", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          token
-        },
-        body: JSON.stringify(postData)
-      })
-      let parsed = await data.json()
-      if (parsed.success) {
-        toast('Transaction Successfull', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        setAmount('')
-        await shopChange({ target: { value: document.getElementById("shopID").value } })
-        let newTrns = await fetchTransactions(document.getElementById("shopID").value, token)
-        setTransactions(newTrns)
-      } else {
-        toast.error('Check Values', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-        });
+      setIsSaving(true)
+      try {
+        let data = await fetch(apiaddress + "/khata/khataentry", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", token },
+          body: JSON.stringify(postData)
+        })
+        let parsed = await data.json()
+        if (parsed.success) {
+          toast('Transaction Successfull', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, theme: "light", transition: Bounce });
+          setAmount('')
+          await shopChange({ target: { value: document.getElementById("shopID").value } })
+          let newTrns = await fetchTransactions(document.getElementById("shopID").value, token)
+          setTransactions(newTrns)
+        } else {
+          toast.error(parsed.error || 'Check Values', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, theme: "dark", transition: Bounce });
+        }
+      } catch (err) {
+        toast.error('Network error — please try again', { position: "top-right", autoClose: 5000, theme: "dark", transition: Bounce });
+      } finally {
+        setIsSaving(false)
       }
-
     } else {
-      toast.error('Check Values', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+      toast.error('Check Values', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, theme: "dark", transition: Bounce });
     }
   }
 
@@ -383,7 +344,7 @@ const KhataEntry = () => {
               </div>
 
               <div className="inline-block w-full px-3 mb-3">
-                <button onClick={doTransaction} className="w-full rounded-md bg-blue-600 text-white font-bold text-xl p-3 mt-3">Submit</button>
+                <button onClick={doTransaction} disabled={isSaving} className={`w-full rounded-md bg-blue-600 text-white font-bold text-xl p-3 mt-3 ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}>{isSaving ? 'Processing...' : 'Submit'}</button>
               </div>
             </div>
 

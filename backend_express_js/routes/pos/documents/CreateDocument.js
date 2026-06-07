@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
         let count = 1
         let xip = await DocCounter.find()
         if(xip.length > 0){
-          await DocCounter.updateMany({$inc:{count: 1}})
+          await DocCounter.updateMany({}, {$inc:{count: 1}})
           count = xip[0].count
         }else{
           count = 1

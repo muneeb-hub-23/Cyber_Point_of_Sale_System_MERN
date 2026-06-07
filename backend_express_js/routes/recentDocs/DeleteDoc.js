@@ -12,64 +12,77 @@ router.delete('/', async (req, res) => {
     const { docid } = req.headers;
 
     try {
-        const thisdoc = await Document.findById(docid);
+        // Atomically claim the document for deletion — prevents double-delete on retry
+        const claimed = await Document.findOneAndUpdate(
+            { _id: docid, status: { $in: ['processed', 'pending', 'open', 'draw'] } },
+            { status: 'deleting' },
+            { new: false }
+        );
+        if (!claimed) {
+            // Already being deleted or doesn't exist
+            const still = await Document.findById(docid);
+            if (!still) return res.json({ success: true, message: 'Already deleted' });
+            return res.status(409).json({ success: false, message: 'Document is already being deleted' });
+        }
+
         const docEntries = await DocumentItem.find({ document: docid });
 
-        await Document.findByIdAndDelete(docid);
-        await DocumentItem.deleteMany({ document: docid });
-
-        if (['sale', 'stockreturn', 'loss'].includes(thisdoc.doctype)) {
-            for (const entry of docEntries) { // Fixed the loop to use 'for...of'
-                await Product.findByIdAndUpdate(entry.product, { $inc: { onHand: Number(entry.qty) } });
+        // Reverse stock
+        const productUpdates = [];
+        if (['sale', 'stockreturn', 'loss'].includes(claimed.doctype)) {
+            for (const entry of docEntries) {
+                productUpdates.push({ updateOne: { filter: { _id: entry.product }, update: { $inc: { onHand: Number(entry.qty) } } } });
             }
-        } else if (['refund', 'purchase'].includes(thisdoc.doctype)) {
-            for (const entry of docEntries) { // Fixed the loop to use 'for...of'
-                await Product.findByIdAndUpdate(entry.product, { $inc: { onHand: -Number(entry.qty) } });
+        } else if (['refund', 'purchase'].includes(claimed.doctype)) {
+            for (const entry of docEntries) {
+                productUpdates.push({ updateOne: { filter: { _id: entry.product }, update: { $inc: { onHand: -Number(entry.qty) } } } });
             }
         }
+        if (productUpdates.length) await Product.bulkWrite(productUpdates);
 
-        let debit;
-        for (let payment of thisdoc.payment) {
-            if (payment.name === 'Debit') {
-                debit = payment;
-            }
-            await CashRegister.findOneAndDelete({ date: thisdoc.date, amount: payment.amount, method: payment.name });
-        }
+        // Reverse cash register entries
+        const cashDeletes = claimed.payment.map(payment => ({
+            deleteOne: { filter: { document: docid } }
+        }));
+        if (cashDeletes.length) await CashRegister.deleteMany({ document: docid });
 
-        if (debit) {
-            // Adjust customer's balance based on document type
-            if (['sale', 'stockreturn', 'loss'].includes(thisdoc.doctype)) {
-                await Customer.findByIdAndUpdate(thisdoc.customer, { $inc: { balance: parseFloat((-debit.amount).toFixed(2)) } });
-            } else if (['refund', 'purchase'].includes(thisdoc.doctype)) {
-                await Customer.findByIdAndUpdate(thisdoc.customer, { $inc: { balance: parseFloat((debit.amount).toFixed(2)) } });
-            }
-
-            // Delete associated transaction
-            await Transaction.findByIdAndDelete(thisdoc.transaction);
+        // Reverse customer balance and transaction
+        const debit = claimed.payment.find(p => p.name === 'Debit');
+        if (debit && claimed.customer) {
+            const balanceAdj = ['sale', 'stockreturn', 'loss'].includes(claimed.doctype)
+                ? parseFloat((-debit.amount).toFixed(2))
+                : parseFloat((debit.amount).toFixed(2));
+            await Customer.findByIdAndUpdate(claimed.customer, { $inc: { balance: balanceAdj } });
+            if (claimed.transaction) await Transaction.findByIdAndDelete(claimed.transaction);
 
             // Recalculate shop totals
-            const customersArray = await Customer.find({ linkedShop: thisdoc.linkedShop });
-            let totalLeneHain = 0;
-            let totalDeneHain = 0;
-
-            customersArray.forEach(customer => {
-                if (customer.balance > 0) {
-                    totalLeneHain += customer.balance;
-                } else {
-                    totalDeneHain += customer.balance;
-                }
+            const customersArray = await Customer.find({ linkedShop: claimed.linkedShop });
+            let totalLeneHain = 0, totalDeneHain = 0;
+            customersArray.forEach(c => {
+                if (c.balance > 0) totalLeneHain += c.balance;
+                else totalDeneHain += c.balance;
             });
-
-            await Shop.findByIdAndUpdate(thisdoc.linkedShop, {
+            await Shop.findByIdAndUpdate(claimed.linkedShop, {
                 lenehain: parseFloat(totalLeneHain.toFixed(2)),
                 denehain: parseFloat(totalDeneHain.toFixed(2))
             });
         }
 
-        res.json({ success: true, message: "Document deleted successfully." });
+        // All reversals done — now safe to delete
+        await DocumentItem.deleteMany({ document: docid });
+        await Document.findByIdAndDelete(docid);
+
+        res.json({ success: true, message: 'Document deleted successfully.' });
     } catch (error) {
         console.error('Error deleting document:', error);
-        res.status(500).json({ success: false, message: 'An error occurred while deleting the document.' });
+        // Rollback status so it can be retried
+        try {
+            await Document.findOneAndUpdate(
+                { _id: docid, status: 'deleting' },
+                { status: 'processed' }
+            );
+        } catch (rb) { console.error('Rollback failed:', rb); }
+        res.status(500).json({ success: false, message: error.message || 'An error occurred while deleting the document.' });
     }
 });
 

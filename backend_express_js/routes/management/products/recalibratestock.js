@@ -12,19 +12,28 @@ router.post('/', async (req, res) => {
 
     try {
         // Fetch all entries for this product, sorted oldest to newest
-        let entries = await DocItems.find({ product: id })
+        let allEntries = await DocItems.find({ product: id })
             .populate('document')
             .sort({ createdAt: 1 })
 
+        // Delete orphan entries whose parent document was deleted (old glitches)
+        const orphanIds = allEntries.filter(e => !e.document).map(e => e._id)
+        if (orphanIds.length > 0) {
+            await DocItems.deleteMany({ _id: { $in: orphanIds } })
+        }
+
+        const entries = allEntries.filter(e => e.document)
+
         if (!entries || entries.length === 0) {
-            return res.status(404).json({ error: 'No entries found for this product' })
+            await Product.findByIdAndUpdate(id, { onHand: 0 })
+            return res.json({ message: 'No valid entries — stock set to 0', finalOnHand: 0, entriesProcessed: 0, orphansDeleted: orphanIds.length })
         }
 
         let runningOnHand = 0
 
         for (let entry of entries) {
-            const doctype = entry.document ? entry.document.doctype : null
-            const isAddition = doctype === 'purchase' || doctype === 'refund' || doctype === null
+            const doctype = entry.document.doctype
+            const isAddition = doctype === 'purchase' || doctype === 'refund'
 
             const onHandBefore = runningOnHand
 
@@ -46,7 +55,8 @@ router.post('/', async (req, res) => {
         res.json({
             message: 'Stock recalibrated successfully',
             finalOnHand: runningOnHand,
-            entriesProcessed: entries.length
+            entriesProcessed: entries.length,
+            orphansDeleted: orphanIds.length
         })
 
     } catch (err) {

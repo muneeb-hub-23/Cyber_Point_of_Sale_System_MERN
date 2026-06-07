@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
       return res.json({ success: true, alreadyProcessed: true })
     }
     const claimed = await Document.findOneAndUpdate(
-      { _id: selectedBill._id, status: { $in: ['open', 'draw'] } },
+      { _id: selectedBill._id, status: { $in: ['open', 'draw', 'pending'] } },
       { status: 'processing' },
       { new: false }
     )
@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 
     let itemsList = await DocItems.find({document:selectedBill._id})
     if (!itemsList || itemsList.length === 0) {
-      await Document.findOneAndUpdate({ _id: selectedBill._id, status: 'processing' }, { status: 'open' })
+      await Document.findOneAndUpdate({ _id: selectedBill._id, status: 'processing' }, { status: 'pending' })
       return res.status(400).json({ success: false, message: 'No items found for this document' });
     }
 
@@ -193,7 +193,7 @@ router.post('/', async (req, res) => {
       if (req.body && req.body.selectedBill && req.body.selectedBill._id) {
         await Document.findOneAndUpdate(
           { _id: req.body.selectedBill._id, status: 'processing' },
-          { status: 'open' }
+          { status: 'pending' }
         )
       }
     } catch (rollbackErr) {
