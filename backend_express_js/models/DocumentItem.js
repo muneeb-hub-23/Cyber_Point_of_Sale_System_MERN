@@ -177,6 +177,7 @@ function _Chainable(filter, conn) {
                 }
                 sql += ' WHERE ' + conditions.join(' AND ')
             }
+            sql += ' ORDER BY createdAt ASC'
             let p = q(this._conn, sql, vals)
                 .then(([rows]) => rows.map(_parse))
             if (this._popProduct)  p = p.then(rows => Promise.all(rows.map(_populateProduct)))

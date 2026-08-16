@@ -28,6 +28,8 @@ router.post('/', async (req, res) => {
             vals.push(userid)
         }
 
+        sql += ' ORDER BY d.count ASC'
+
         const [rows] = await db.query(sql, vals)
         const documents = rows.map(r => {
             if (typeof r.payment === 'string') try { r.payment = JSON.parse(r.payment) } catch (_) {}

@@ -49,9 +49,13 @@ const CustomerGroup = {
         return Promise.all(rows.map(_populateIds))
     },
 
-    async findById(id) {
-        const [rows] = await db.query('SELECT * FROM customergroups WHERE id = ?', [id])
-        return rows[0] ? _populateIds(rows[0]) : null
+    findById(id) {
+        const resolvedId = id && typeof id === 'object' ? (id._id || id.id) : id
+        const promise = db.query('SELECT * FROM customergroups WHERE id = ?', [resolvedId])
+            .then(([rows]) => rows[0] ? _populateIds(rows[0]) : null)
+        // Return a thenable with a chainable .populate() (data is already fully populated)
+        promise.populate = function() { return promise }
+        return promise
     },
 
     async save(data) {
