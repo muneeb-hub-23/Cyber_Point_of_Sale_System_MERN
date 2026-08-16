@@ -15,15 +15,23 @@ const CashRegister = require('../../../models/CashRegister')
  * @param {object} [conn]    - optional transaction connection
  */
 async function updateProductHistory(itemsList, user, qtySign, docType, conn) {
-    const productIds = itemsList.map(item => item.product).filter(Boolean)
+    // item.product may be a full object (sent from frontend) or a plain ID string
+    const productIds = itemsList.map(item =>
+        item.product && typeof item.product === 'object'
+            ? (item.product.id || item.product._id)
+            : item.product
+    ).filter(Boolean)
     const products = await Product.find({ id: { $in: productIds } }, conn)
     const bulkOps = []
 
     for (const match of itemsList) {
-        const product = products.find(p => p.id === match.product || p.id === match.product?.toString())
+        const matchId = match.product && typeof match.product === 'object'
+            ? (match.product.id || match.product._id)
+            : match.product
+        const product = products.find(p => p.id === matchId || p.id === matchId?.toString())
         if (product) {
             await ProductHistory.save({ ...product, modifiedby: user, productId: product.id, docType }, conn)
-            bulkOps.push({ updateOne: { filter: { id: match.product }, update: { $inc: { onHand: qtySign * match.qty } } } })
+            bulkOps.push({ updateOne: { filter: { id: product.id }, update: { $inc: { onHand: qtySign * match.qty } } } })
         }
     }
     await Product.bulkWrite(bulkOps, conn)
