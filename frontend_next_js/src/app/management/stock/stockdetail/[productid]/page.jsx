@@ -17,31 +17,34 @@ const Page = () => {
   const [productData, setProductData] = useState(undefined)
   const [productEntries, setProductEntries] = useState(undefined)
   const [recalibrating, setRecalibrating] = useState(false)
-  const isAddition = (entry) => {
-    if (entry.entryType === 'adjustment') return entry.adjustType === 'increase'
-    const doctype = entry.document && entry.document.doctype
-    return doctype === 'purchase' || doctype === 'refund'
-  }
-
-  const rows = useMemo(() => {
+  const beforeAfter = useMemo(() => {
+    let data = [];
     let reference = 0;
 
-    return (productEntries || []).map(entry => {
-      const qty = Number(entry.qty) || 0
-      const before = reference
-      reference = isAddition(entry) ? reference + qty : reference - qty
-      return { entry, before, after: reference, addition: isAddition(entry) }
-    })
-  }, [productEntries]);
+    if (productEntries && productEntries.length > 0) {
+      for (let entry of productEntries) {
+        const doctype = entry.document?.doctype
+        if (doctype === 'adjuststock') {
+          // Use the stored onHandBefore/After directly
+          data.push({ before: entry.onHandBefore, after: entry.onHandAfter });
+        } else if (doctype === 'purchase' || doctype === 'refund') {
+          let temp = reference;
+          reference += entry.qty;
+          data.push({ before: temp, after: reference });
+        } else if (entry.document) {
+          let temp = reference;
+          reference -= entry.qty;
+          data.push({ before: temp, after: reference });
+        } else {
+          let temp = reference;
+          reference += entry.qty;
+          data.push({ before: temp, after: reference });
+        }
+      }
+    }
 
-  const visibleRows = useMemo(() => {
-    if (docType === 'all') return rows
-    return rows.filter(({ entry }) => (
-      entry.entryType === 'adjustment'
-        ? docType === 'adjuststock'
-        : entry.document && entry.document.doctype === docType
-    ))
-  }, [rows, docType]);
+    return data;
+  }, [productEntries]);
 
 
   const getProductData = async (pid) => {
@@ -157,7 +160,7 @@ const Page = () => {
             <option value="refund">Refund</option>
             <option value="loss">Loss</option>
             <option value="stockreturn">Stock Return</option>
-            <option value="adjuststock">Stock Adjustment</option>
+            <option value="adjuststock">Adjust Stock</option>
           </select>
         </div>
         <div className='p-2 m-2 rounded-md bg-boxdark border-blue-600 border'>
@@ -210,28 +213,45 @@ const Page = () => {
           <div className="p-1 w-1/12">Sale</div>
           <div className="p-1 w-1/12">Sale Total</div>
         </div>
-        {visibleRows.map(({ entry: p, before, after, addition }, key) => (
-          <div key={p._id || key} className={`flex items-center ${key % 2 === 0 ? "bg-boxdark" : "bg-boxdark-2"} my-1 text-center text-white`}>
-            <div className="p-1 w-2/12 text-left pl-3">{p.document && p.document.date && formatDateString(p.document.date)}</div>
-            <div className="w-1/12 text-left">
-              {p.entryType === 'adjustment'
-                ? <span className='text-amber-400'>adjust</span>
-                : (p.document && p.document.doctype || "purchase")}
-            </div>
-            <div className="p-1 w-2/12 text-left">
-              {p.entryType === 'adjustment'
-                ? `${p.reason || 'Stock Adjustment'}${p.requestedBy ? ` (${p.requestedBy})` : ''}`
-                : (p.document && p.document.customer && p.document.customer.customerName || "No Customer")}
-            </div>
-            <div className="p-1 w-1/12">{before}</div>
-            <div className={`p-1 w-1/12 ${addition ? "text-green-600" : "text-rose-600"}`}>{addition ? '+' : '-'}{p.qty}</div>
-            <div className="p-1 w-1/12">{after}</div>
-            <div className="p-1 w-1/12">{p.costExpense}</div>
-            <div className="p-1 w-1/12">{p.costamount}</div>
-            <div className="p-1 w-1/12">{p.sale}</div>
-            <div className="p-1 w-1/12">{p.saleamount}</div>
-          </div>
-        ))}
+        {productEntries && productEntries
+          .filter(p => docType === 'all' || (p.document && p.document.doctype === docType))
+          .map((p, key) => {
+            const doctype = p.document && p.document.doctype
+            const isAdjust = doctype === 'adjuststock'
+            const isIncrease = isAdjust
+              ? p.adjustType === 'increase'
+              : (doctype === 'purchase' || doctype === 'refund')
+
+            // Date: adjuststock entries have ISO datetime; doc entries have YYYYMMDD string
+            const displayDate = isAdjust
+              ? (p.createdAt ? formatDate(p.createdAt) : '')
+              : (p.document && p.document.date ? formatDateString(p.document.date) : '')
+
+            const onHandBefore = isAdjust ? p.onHandBefore : p.productData.onHand
+            const onHandAfter = isAdjust
+              ? p.onHandAfter
+              : (isIncrease ? p.productData.onHand + p.qty : p.productData.onHand - p.qty)
+
+            // For adjust entries show reason; for others show customer name
+            const customerOrReason = isAdjust
+              ? (p.reason || 'Adjust Stock')
+              : (p.document && p.document.customer && p.document.customer.customerName || 'No Customer')
+
+            return (
+              <div key={key} className={`flex items-center ${key % 2 === 0 ? "bg-boxdark" : "bg-boxdark-2"} my-1 text-center text-white`}>
+                <div className="p-1 w-2/12 text-left pl-3">{displayDate}</div>
+                <div className="w-1/12 text-left">{doctype || 'purchase'}</div>
+                <div className="p-1 w-2/12 text-left">{customerOrReason}</div>
+                <div className="p-1 w-1/12">{onHandBefore}</div>
+                <div className={`p-1 w-1/12 ${isIncrease ? "text-green-600" : "text-rose-600"}`}>{isIncrease ? '+' : '-'}{p.qty}</div>
+                <div className="p-1 w-1/12">{onHandAfter}</div>
+                <div className="p-1 w-1/12">{p.costExpense}</div>
+                <div className="p-1 w-1/12">{p.costamount}</div>
+                <div className="p-1 w-1/12">{p.sale}</div>
+                <div className="p-1 w-1/12">{p.saleamount}</div>
+              </div>
+            )
+          })}
       </div>
     </div>
   )
