@@ -47,9 +47,9 @@ const SelectCustomer = ({ setCustomer, customersList, setCustomerSelecting }) =>
       
       {/* Customer List */}
       <div className="bg-transparent text-white p-2 rounded overflow-y-auto h-4/5">
-        {filteredCustomers && filteredCustomers.map((customer) => (
+        {filteredCustomers && filteredCustomers.map((customer, idx) => (
           <div 
-            key={customer._id} 
+            key={customer._id || customer.id || idx} 
             className="p-2 border-b cursor-pointer hover:bg-gray-200"
             onClick={() => {
               setCustomer(customer);

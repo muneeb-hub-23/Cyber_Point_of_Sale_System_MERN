@@ -3,40 +3,25 @@ const router = express.Router()
 const fs = require('fs')
 const path = require('path')
 const jwt = require('jsonwebtoken')
-const CashRegister = require('../../models/CashRegister')
-const Category = require('../../models/Category')
-const Counter = require('../../models/Counter')
-const Customer = require('../../models/Customer')
-const CustomerGroup = require('../../models/CustomerGroup')
-const DocumentItem = require('../../models/DocumentItem')
-const DocumentNumber = require('../../models/DocumentNumber')
-const Documents = require('../../models/Documents')
-const History = require('../../models/History')
-const PaymentMethods = require('../../models/PaymentMethods')
-const Products = require('../../models/Product')
-const ProductHistory = require('../../models/ProductHistory')
-const SaleTypes = require('../../models/SaleTypes')
-const Shop = require('../../models/Shop')
-const Transaction = require('../../models/Transaction')
-const Users = require('../../models/User')
+const db = require('../../db')
 
-const COLLECTIONS = [
-    { key: 'cashregister',    Model: CashRegister,   label: 'Cash Register' },
-    { key: 'category',        Model: Category,        label: 'Categories' },
-    { key: 'counter',         Model: Counter,         label: 'Counters' },
-    { key: 'customers',       Model: Customer,        label: 'Customers' },
-    { key: 'customersgroups', Model: CustomerGroup,   label: 'Customer Groups' },
-    { key: 'documentitem',    Model: DocumentItem,    label: 'Document Items' },
-    { key: 'documentnumber',  Model: DocumentNumber,  label: 'Document Numbers' },
-    { key: 'documents',       Model: Documents,       label: 'Documents' },
-    { key: 'history',         Model: History,         label: 'History' },
-    { key: 'paymentmethods',  Model: PaymentMethods,  label: 'Payment Methods' },
-    { key: 'products',        Model: Products,        label: 'Products' },
-    { key: 'producthistory',  Model: ProductHistory,  label: 'Product History' },
-    { key: 'saletypes',       Model: SaleTypes,       label: 'Sale Types' },
-    { key: 'shops',           Model: Shop,            label: 'Shops' },
-    { key: 'transactions',    Model: Transaction,     label: 'Transactions' },
-    { key: 'users',           Model: Users,           label: 'Users' },
+const TABLES = [
+    { key: 'cashregister',    table: 'cashregister',        label: 'Cash Register' },
+    { key: 'category',        table: 'categories',           label: 'Categories' },
+    { key: 'counter',         table: 'counters',             label: 'Counters' },
+    { key: 'customers',       table: 'customers',            label: 'Customers' },
+    { key: 'customersgroups', table: 'customergroups',       label: 'Customer Groups' },
+    { key: 'documentitem',    table: 'docitems',             label: 'Document Items' },
+    { key: 'documentnumber',  table: 'documentnumbers',      label: 'Document Numbers' },
+    { key: 'documents',       table: 'documents',            label: 'Documents' },
+    { key: 'history',         table: 'history',              label: 'History' },
+    { key: 'paymentmethods',  table: 'paymentmethods',       label: 'Payment Methods' },
+    { key: 'products',        table: 'products',             label: 'Products' },
+    { key: 'producthistory',  table: 'producthistory',       label: 'Product History' },
+    { key: 'saletypes',       table: 'saletypes',            label: 'Sale Types' },
+    { key: 'shops',           table: 'shops',                label: 'Shops' },
+    { key: 'transactions',    table: 'transactions',         label: 'Transactions' },
+    { key: 'users',           table: 'users',                label: 'Users' },
 ]
 
 const send = (res, payload) => res.write(`data: ${JSON.stringify(payload)}\n\n`)
@@ -47,14 +32,15 @@ router.get('/', async (req, res) => {
     res.setHeader('Connection', 'keep-alive')
     res.flushHeaders()
 
-    const total = COLLECTIONS.length
+    const total = TABLES.length
     const startTime = Date.now()
     const data = {}
 
     try {
-        for (let i = 0; i < COLLECTIONS.length; i++) {
-            const { key, Model, label } = COLLECTIONS[i]
-            data[key] = await Model.find()
+        for (let i = 0; i < TABLES.length; i++) {
+            const { key, table, label } = TABLES[i]
+            const [rows] = await db.query(`SELECT * FROM \`${table}\``)
+            data[key] = rows
 
             const done = i + 1
             const elapsed = Math.round((Date.now() - startTime) / 1000)

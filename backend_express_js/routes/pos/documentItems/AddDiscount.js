@@ -5,48 +5,23 @@ const DocumentItem = require('../../../models/DocumentItem');
 router.post('/', async (req, res) => {
     const updatedItems = req.body;
     try {
-        // Process each item in the array
         for (let item of updatedItems) {
-            const {
-                document,
-                product,
-                qty,
-                cost,
-                expense,
-                tax,
-                saleamount,
-                costamount,
-                discount,
-                finalprice,
-                sale,
-                user
-            } = item;
-
-            // Find if an item with the same document and product already exists
+            const { document, product, qty, cost, expense, tax, saleamount, costamount, discount, finalprice, sale, user } = item;
             let existingItem = await DocumentItem.findOne({ document, product });
 
             if (existingItem) {
-                // Update the existing item with the new values
-                existingItem.qty = qty;
-                existingItem.cost = cost;
-                existingItem.expense = expense;
-                existingItem.tax = tax;
-                existingItem.sale = sale;
-                existingItem.costamount = costamount;
-                existingItem.saleamount = saleamount;
-                existingItem.discount = discount;
-                existingItem.finalprice = finalprice;
-                existingItem.user = user;
-
-                // Save the updated item
-                await existingItem.save();
+                await DocumentItem.findByIdAndUpdate(existingItem.id, {
+                    qty, cost, expense, tax, sale, costamount, saleamount,
+                    discount: JSON.stringify(discount),
+                    finalprice, user,
+                });
             } else {
-                // If the item does not exist, create a new one
-                const newItem = new DocumentItem(item);
-                await newItem.save();
+                await DocumentItem.save({
+                    ...item,
+                    discount: discount,
+                });
             }
         }
-
         res.json({ success: true, message: 'Items updated successfully' });
     } catch (error) {
         console.error(error);

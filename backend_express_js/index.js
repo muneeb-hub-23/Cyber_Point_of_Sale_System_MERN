@@ -1,9 +1,9 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const mongoose = require('mongoose')
 const path = require('path');
 const verifyer = require('./authVerifyer')
+const db = require('./db')
 
 app.use(cors())
 app.use(express.json())
@@ -11,12 +11,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.json({ limit: '500mb' }));
-try{
-mongoose.connect('mongodb://localhost:27017/cyber_khata')
-console.log('database connected')
-}catch(err){
-    console.log(err)
-}
+
+// Test MySQL connection on startup
+db.getConnection()
+    .then(conn => {
+        console.log('MySQL database connected')
+        conn.release()
+    })
+    .catch(err => {
+        console.error('MySQL connection failed:', err.message)
+    })
 
 
 

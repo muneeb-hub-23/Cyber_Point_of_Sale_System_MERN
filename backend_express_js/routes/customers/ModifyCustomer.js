@@ -4,10 +4,10 @@ const Customer = require('../../models/Customer')
 
 router.delete('/',async (req,res)=>{
         console.log(req.body)
-        let modifiedcustomer = await Customer.findByIdAndUpdate({_id:req.body._id},req.body)
+        const { _id, id, ...updateData } = req.body
+        const customerId = _id || id
+        let modifiedcustomer = await Customer.findByIdAndUpdate(customerId, updateData)
         res.send(JSON.stringify(modifiedcustomer))
-
 })
-
 
 module.exports = router

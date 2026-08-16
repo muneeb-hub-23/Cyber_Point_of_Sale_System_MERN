@@ -7,31 +7,28 @@ router.get('/', async (req, res) => {
     let { shopid } = req.headers;
     
     if (shopid) {
-        // Find customers linked to the shop
         let customers = await Customer.find({ linkedShop: shopid });
-
-        // Find all customer groups linked to the shop
         let customerGroups = await CustomerGroup.find({ 'ids.shopID': shopid });
 
-        // Extract customer IDs from the customer groups
         let verifiedCustomerIDs = [];
         customerGroups.forEach(group => {
-            group.ids.forEach(id => {
-                verifiedCustomerIDs.push(id.customerID.toString()); // Push the customerID as string for comparison
-            });
+            if (group && group.ids) {
+                group.ids.forEach(entry => {
+                    const cid = entry.customerID?._id || entry.customerID?.id || entry.customerID
+                    if (cid) verifiedCustomerIDs.push(cid.toString());
+                });
+            }
         });
 
-        // Update each customer with the 'verified' field
         let updatedCustomers = customers.map(customer => {
-            // Create a new object to ensure Mongoose documents are not mutated directly
-            let customerWithVerifiedField = customer.toObject();
-            customerWithVerifiedField.verified = verifiedCustomerIDs.includes(customer._id.toString());
-            return customerWithVerifiedField;
+            const c = { ...customer, _id: customer.id }
+            c.verified = verifiedCustomerIDs.includes(customer.id.toString());
+            return c;
         });
 
-        res.send(JSON.stringify(updatedCustomers)); // Return the updated customers with 'verified' field
+        res.send(JSON.stringify(updatedCustomers));
     } else {
-        res.send(JSON.stringify([])); // Return empty array if no shopid provided
+        res.send(JSON.stringify([]));
     }
 });
 

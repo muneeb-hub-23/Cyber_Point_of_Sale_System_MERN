@@ -4,7 +4,7 @@ const router = express.Router()
 
 router.delete('/',async(req,res)=>{
     let {id} = req.body
-    let data = await Product.deleteOne({_id:id})
+    let data = await Product.deleteOne({id:id})
     if(data){
         res.json({success:true})
     }else{

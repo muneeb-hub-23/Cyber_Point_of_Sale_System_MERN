@@ -7,17 +7,28 @@ router.post('/', async (req, res) => {
   try {
     const { method, selecteddocument } = req.body;
   
-    // Fetch the current document and its entries in parallel
-    const currentDocument = await Document.findById(selecteddocument).populate("customerGroup");
-    const currentDocumentEntries = await DocumentItem.find({ document: currentDocument });
-    let customerIDS = currentDocument.customerGroup.ids.map(g=> g.customerID)
-    console.log(customerIDS)
-    // Fetch past processed bills for the customer
-    const customerPastBills = await Document.find({ customer: { $in: customerIDS }, status: 'processed' }, { _id: 1 });
-    const idsarray = customerPastBills.map(bill => bill._id.toString());  // Using map for cleaner array construction
+    // Fetch the current document with customerGroup populated
+    const currentDocument = await Document.find({ id: selecteddocument }).populate('customerGroup');
+    const doc = currentDocument[0];
+    if (!doc) return res.json({ success: false, message: 'Document not found' });
+
+    const currentDocumentEntries = await DocumentItem.find({ document: selecteddocument });
+
+    // customerGroup.ids contains { customerID: { _id, id, ... }, shopID: {...} }
+    const customerIDS = doc.customerGroup ? doc.customerGroup.ids.map(g => g.customerID._id || g.customerID.id || g.customerID) : [];
+
+    // Fetch past processed bills for the customer group members
+    const db = require('../../db');
+    const placeholders = customerIDS.map(() => '?').join(',');
+    const customerPastBills = customerIDS.length > 0
+        ? (await db.query(`SELECT id FROM documents WHERE customer IN (${placeholders}) AND status = 'processed'`, customerIDS))[0]
+        : [];
+    const idsarray = customerPastBills.map(bill => bill.id);
 
     // Fetch customer past entries in bulk
-    const customerPastEntries = await DocumentItem.find({ document: { $in: idsarray } });
+    const customerPastEntries = idsarray.length > 0
+        ? await DocumentItem.find({ document: { $in: idsarray } })
+        : [];
 
     // Create a map for fast lookup of past entries by product ID
     const pastEntriesMap = customerPastEntries.reduce((map, entry) => {
@@ -61,14 +72,8 @@ router.post('/', async (req, res) => {
       await DocumentItem.bulkWrite(bulkOps);
     }
 
-    // Update all documents with status 'pending' to 'completed' (if applicable)
-    await DocumentItem.updateMany(
-      { status: "pending" },
-      { $set: { status: "completed" } }
-    );
-
     // If everything went successfully
-    res.json({ success: true });
+    res.json({ success: true, updated: bulkOps.length });
 
   } catch (error) {
     // In case of any error

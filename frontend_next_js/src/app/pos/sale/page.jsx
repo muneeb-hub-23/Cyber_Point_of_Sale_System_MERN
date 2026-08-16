@@ -27,6 +27,7 @@ import { handleItemDiscount } from './functions';
 import './xstyle.css'
 const Page = () => {
     const [caller, setcaller] = useState(0)
+    const [isLoading, setIsLoading] = useState(true)
     const token = localStorage.getItem("token")
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -36,8 +37,11 @@ const Page = () => {
     const [customerSelecting, setCustomerSelecting] = useState(false)
     const [shops, setShops] = useState([])
     const [selectedShop, setSelectedShop] = useState(undefined)
+    const selectedShopRef = React.useRef(undefined)
     const [bills, setBills] = useState([])
-    const [selectedBill, setSelectedBill] = useState(undefined)
+    const [selectedBill, _setSelectedBill] = useState(undefined)
+    const selectedBillRef = React.useRef(undefined)
+    const setSelectedBill = (val) => { selectedBillRef.current = val; _setSelectedBill(val); }
     const [products, setProducts] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const [suggestions, setSuggestions] = useState([]);
@@ -341,6 +345,8 @@ const Page = () => {
 
     };
     const linkCustomer = async (customer) => {
+        const shop = selectedShopRef.current || selectedShop
+        const customerId = customer._id || customer.id
         setCustomer(customer)
         let data = await fetch(apiaddress + '/pos/documents/linkcustomergroup', {
             method: "POST",
@@ -348,22 +354,23 @@ const Page = () => {
                 'content-type': 'application/json',
                 token
             },
-            body: JSON.stringify({ id: selectedBill._id, customer: customer._id })
+            body: JSON.stringify({ id: selectedBill._id, customer: customerId })
         })
         let parsed = await data.json()
         if (parsed.success) {
             toast("Customer Selected")
-            const billData = await fetchBillsx('sale', user._id, 'pending', selectedShop._id, selectedDate);
-            setBills(billData);
-            let x = billData.filter(b => b._id === selectedBill._id)
-            setSelectedBill(x[0]);
-
+            const billData = await fetchBillsx('sale', user._id, 'pending', shop._id, selectedDate);
+            if (Array.isArray(billData)) {
+                setBills(billData);
+                let x = billData.filter(b => b._id === selectedBill._id)
+                setSelectedBill(x[0]);
+            }
         } else {
-            "Backend Error"
+            toast.error("Backend Error linking customer")
         }
-
     }
     const unlinkCustomer = async (customer) => {
+        const shop = selectedShopRef.current || selectedShop
         setCustomer(undefined)
         let data = await fetch(apiaddress + '/pos/documents/delinkcustomer', {
             method: "POST",
@@ -375,11 +382,13 @@ const Page = () => {
         let parsed = await data.json()
         if (parsed.success) {
             toast("Customer Removed")
-            const newBills = await fetchBillsx('sale', user._id, 'pending', selectedShop._id, selectedDate);
-            setBills(newBills)
-            setSelectedBill(newBills.find(bil => bil._id === selectedBill._id))
+            const newBills = await fetchBillsx('sale', user._id, 'pending', shop._id, selectedDate);
+            if (Array.isArray(newBills)) {
+                setBills(newBills)
+                setSelectedBill(newBills.find(bil => bil._id === selectedBill._id))
+            }
         } else {
-            "Backend Error"
+            toast.error("Backend Error unlinking customer")
         }
     }
     const handleBillChange = (e) => {
@@ -452,7 +461,8 @@ const Page = () => {
         }
     };
     const copyDiscount = async (method) => {
-        if (!selectedBill.customerGroup) {
+        const bill = selectedBillRef.current || selectedBill
+        if (!bill || !bill.customerGroup) {
             toast.error("Please Select Customer First!")
             return
         }
@@ -462,13 +472,17 @@ const Page = () => {
                 'content-type': 'application/json',
                 token
             },
-            body: JSON.stringify({ method, selecteddocument: selectedBill._id })
+            body: JSON.stringify({ method, selecteddocument: bill._id })
         })
         let parsed = await data.json()
         if (parsed.success) {
-            toast("Data Fetched")
-            let newentries = await getDocumentItems(selectedBill._id)
-            setitemsList(newentries)
+            if (parsed.updated > 0) {
+                toast("Discount Applied to " + parsed.updated + " item(s)")
+                let newentries = await getDocumentItems(bill._id)
+                setitemsList(newentries)
+            } else {
+                toast.error("No past purchase history found for this customer")
+            }
         } else {
             toast.error("Database Error")
         }
@@ -487,12 +501,14 @@ const Page = () => {
         );
     };
     const handleBillAction = async (action) => {
+        const shop = selectedShopRef.current || selectedShop
+        if (isLoading || !shop) { toast.error("Please wait, loading..."); return; }
         let billData;
 
         if (action === 'create') {
             // Create Bill
-            await createBill('sale', user._id, 'pending', selectedShop._id, selectedDate, customer && customer);
-            billData = await fetchBillsx('sale', user._id, 'pending', selectedShop._id, selectedDate);
+            await createBill('sale', user._id, 'pending', shop._id, selectedDate, customer && customer);
+            billData = await fetchBillsx('sale', user._id, 'pending', shop._id, selectedDate);
             setBills(billData);
             const newBill = billData[billData.length - 1];
             setSelectedBill(newBill);
@@ -501,8 +517,8 @@ const Page = () => {
             setCustomer(newBill.customer ? newBill.customer : undefined);
         } else if (action === 'delete') {
             // Delete Bill
-            await deleteDocument(selectedBill._id, 'sale', user._id, 'pending', selectedShop._id, formatDate(selectedDate));
-            billData = await fetchBillsx('sale', user._id, 'pending', selectedShop._id, selectedDate);
+            await deleteDocument(selectedBill._id, 'sale', user._id, 'pending', shop._id, formatDate(selectedDate));
+            billData = await fetchBillsx('sale', user._id, 'pending', shop._id, selectedDate);
 
             if (billData.length > 0) {
                 setBills(billData);
@@ -511,7 +527,7 @@ const Page = () => {
                 setitemsList(newItems);
                 setCustomer(billData[0].customerGroup ? billData[0].customerGroup : undefined);
             } else {
-                const newBill = await createBill('sale', user._id, 'pending', selectedShop._id, selectedDate);
+                const newBill = await createBill('sale', user._id, 'pending', shop._id, selectedDate);
                 setBills(newBill);
                 setSelectedBill(newBill[0]);
                 let newItems = await getDocumentItems(newBill[0]._id);
@@ -659,6 +675,8 @@ const Page = () => {
         }
     };
     const handleFinalize = async () => {
+        const shop = selectedShopRef.current || selectedShop
+        if (isLoading || !shop) { toast.error("Please wait, loading..."); return; }
         if (isSaving) return
         let xsm = false
         for (let i of balanceTotal) {
@@ -702,7 +720,7 @@ const Page = () => {
                 setSplitedPayments([])
                 toast("Document Processed")
                 setCustomer(undefined)
-                const billData = await fetchBillsx('sale', user._id, 'pending', selectedShop._id, selectedDate);
+                const billData = await fetchBillsx('sale', user._id, 'pending', shop._id, selectedDate);
                 if (billData.length > 0) {
                     setBills(billData);
                     setSelectedBill(billData[0]);
@@ -710,7 +728,7 @@ const Page = () => {
                     setitemsList(newlist)
                     setCustomer(billData[0].customerGroup ? billData[0].customerGroup : undefined)
                 } else if (billData.length === 0) {
-                    const newBill = await createBill('sale', user._id, 'pending', selectedShop._id, selectedDate);
+                    const newBill = await createBill('sale', user._id, 'pending', shop._id, selectedDate);
                     setBills(newBill);
                     setSelectedBill(newBill[0]);
                     let newlist = await getDocumentItems(newBill[0]._id)
@@ -738,48 +756,67 @@ const Page = () => {
         }
     }, [customer])
     useEffect(() => {
+        let cancelled = false;
         const initializeData = async () => {
             if (!user || !user._id) {
                 return;
             }
-            
+            if (!cancelled) setIsLoading(true);
             try {
                 const shopData = await fetchShops();
+                if (cancelled) return;
+                if (!shopData || !Array.isArray(shopData) || shopData.length === 0) {
+                    console.error("No shops returned from server"); if (!cancelled) setIsLoading(false); return;
+                }
                 setShops(shopData);
                 setSelectedShop(shopData[0]);
+                selectedShopRef.current = shopData[0];
+
                 let customers = await fetchCustomers(token)
+                if (cancelled) return;
                 setCustomerList(customers.data)
 
-                const billData = await fetchBillsx('sale', user._id, 'pending', shopData[0]._id, selectedDate);
+                const billDataRaw = await fetchBillsx('sale', user._id, 'pending', shopData[0]._id, selectedDate);
+                if (cancelled) return;
+                const billData = Array.isArray(billDataRaw) ? billDataRaw : [];
 
                 if (billData.length > 0) {
                     setBills(billData);
                     setSelectedBill(billData[0]);
                     let newlist = await getDocumentItems(billData[0]._id)
+                    if (cancelled) return;
                     setitemsList(newlist)
                     setCustomer(billData[0].customerGroup ? customers.data.find(c => c._id === billData[0].customerGroup._id) : undefined)
-                } else if (billData.length === 0) {
+                } else {
                     const newBill = await createBill('sale', user._id, 'pending', shopData[0]._id, selectedDate);
-                    setBills(newBill);
-                    setSelectedBill(newBill[0]);
-                    let newlist = await getDocumentItems(newBill[0]._id)
-                    setitemsList(newlist)
-                    // setCustomer(newBill[0].customer ? billData[0].customer : undefined)
+                    if (cancelled) return;
+                    const newBillArr = Array.isArray(newBill) ? newBill : [];
+                    if (newBillArr.length > 0) {
+                        setBills(newBillArr);
+                        setSelectedBill(newBillArr[0]);
+                        let newlist = await getDocumentItems(newBillArr[0]._id)
+                        if (cancelled) return;
+                        setitemsList(newlist)
+                    }
                 }
                 const productData = await fetchProducts();
+                if (cancelled) return;
                 setProducts(productData);
 
             } catch (error) {
-                console.log(error)
                 console.error("Error initializing data:", error);
             }
+            if (!cancelled) setIsLoading(false);
         };
 
         initializeData();
 
         // Register event listener and cleanup on unmount
         document.addEventListener('keydown', enter);
-        return () => document.removeEventListener('keydown', enter);
+        return () => {
+            cancelled = true;
+            document.removeEventListener('keydown', enter);
+        };
 
         // Adding dependencies
     }, [selectedDate, user]);
@@ -1263,22 +1300,25 @@ const Page = () => {
                             <div className='w-full mx-auto flex justify-center items-center text-center'>
                                 <IoIosAddCircleOutline
                                     onClick={async () => await handleBillAction('create')}
-                                    className='text-4xl rounded-full text-green-500 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300'
+                                    className={`text-4xl rounded-full transition-shadow duration-300 ${isLoading ? 'text-gray-500 cursor-not-allowed' : 'text-green-500 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)]'}`}
                                 />
-                                <select
-                                    value={selectedBill && selectedBill._id}
-                                    onChange={handleBillChange}
-                                    className='w-7/12 p-3 text-green-400 text-lg bg-transparent outline-1 outline-slate-500 m-3 border-slate-500 border-2 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300'
-                                    name="a" id="a"
-                                >
-                                    {bills && bills.length > 0 && bills.map((bi, num) => (
-                                        <option key={bi._id} value={bi._id}>{bi.customer && bi.customer.customerName.length > 0 ? bi.customer.customerName : 'No Name ' + num}</option>
-                                    ))}
-                                </select>
+                                {isLoading
+                                    ? <div className='w-7/12 p-3 text-yellow-400 text-sm text-center m-3 border-slate-500 border-2'>Loading...</div>
+                                    : <select
+                                        value={selectedBill && selectedBill._id}
+                                        onChange={handleBillChange}
+                                        className='w-7/12 p-3 text-green-400 text-lg bg-transparent outline-1 outline-slate-500 m-3 border-slate-500 border-2 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300'
+                                        name="a" id="a"
+                                    >
+                                        {bills && bills.length > 0 && bills.map((bi, num) => (
+                                            <option key={bi._id} value={bi._id}>{bi.customer && bi.customer.customerName ? bi.customer.customerName : 'No Name ' + num}</option>
+                                        ))}
+                                    </select>
+                                }
 
                                 <MdOutlineDeleteOutline
                                     onClick={async () => await handleBillAction('delete')}
-                                    className='text-4xl rounded-full text-rose-500 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300'
+                                    className={`text-4xl rounded-full transition-shadow duration-300 ${isLoading ? 'text-gray-500 cursor-not-allowed' : 'text-rose-500 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)]'}`}
                                 />
                             </div>
 

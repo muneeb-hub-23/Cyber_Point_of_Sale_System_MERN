@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
 
   try {
     // Create a new customer group using the users data
-    let data = await CustomerGroup.find().populate("ids.customerID").populate("ids.shopID")
+    let data = await CustomerGroup.find()   // ids (with customerID + shopID) are auto-populated by the model
 
     // Send a success response if the group is created successfully
     res.json({ success: true, data });

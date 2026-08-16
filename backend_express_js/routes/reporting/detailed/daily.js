@@ -91,7 +91,8 @@ router.get('/', async (req, res) => {
     let todayDocsIds = todayDocs.map(doc => { return doc._id })
     let todayDocsItems = await DocItem.find({ document: { $in: todayDocsIds } }).populate('document');
     let shopNames = shops.map(s => { return { id: s._id, name: s.shopName } });
-    let products = await Product.find().populate('shop');
+    // Product.find() returns a plain array — 'shop' is just an ID string, no populate needed
+    let products = await Product.find();
     let stock = [];
     let sales = [];
     let profit = [];
@@ -179,7 +180,8 @@ router.get('/', async (req, res) => {
         let stockCost = 0;
         let stockSale = 0;
         for (let product in products) {
-            if (products[product].shop._id.toString() === shops[shop]._id.toString()) {
+            const productShopId = products[product].shop?._id || products[product].shop
+            if (productShopId && productShopId.toString() === shops[shop]._id.toString()) {
                 stockCost += (products[product].cost + (products[product].iskharchaincludedinsale ? products[product].kharcha : 0)) * products[product].onHand
                 stockSale += (products[product].sale * products[product].onHand)
             }

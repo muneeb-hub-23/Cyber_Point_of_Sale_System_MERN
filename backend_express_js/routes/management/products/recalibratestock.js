@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const DocItems = require('../../../models/DocumentItem')
+const db = require('../../../db')
 const Product = require('../../../models/Product')
 
 router.post('/', async (req, res) => {
@@ -11,18 +11,23 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        // Fetch all entries for this product, sorted oldest to newest
-        let allEntries = await DocItems.find({ product: id })
-            .populate('document')
-            .sort({ createdAt: 1 })
+        // Fetch all entries for this product joined with document, sorted oldest first
+        const [allEntries] = await db.query(
+            `SELECT di.*, doc.doctype, doc.status AS docStatus
+             FROM docitems di
+             LEFT JOIN documents doc ON doc.id = di.document
+             WHERE di.product = ?
+             ORDER BY di.createdAt ASC`,
+            [id]
+        )
 
-        // Delete orphan entries whose parent document was deleted (old glitches)
-        const orphanIds = allEntries.filter(e => !e.document).map(e => e._id)
+        // Delete orphan entries whose parent document was deleted
+        const orphanIds = allEntries.filter(e => !e.doctype).map(e => e.id)
         if (orphanIds.length > 0) {
-            await DocItems.deleteMany({ _id: { $in: orphanIds } })
+            await db.query(`DELETE FROM docitems WHERE id IN (?)`, [orphanIds])
         }
 
-        const entries = allEntries.filter(e => e.document)
+        const entries = allEntries.filter(e => e.doctype)
 
         if (!entries || entries.length === 0) {
             await Product.findByIdAndUpdate(id, { onHand: 0 })
@@ -32,24 +37,16 @@ router.post('/', async (req, res) => {
         let runningOnHand = 0
 
         for (let entry of entries) {
-            const doctype = entry.document.doctype
-            const isAddition = doctype === 'purchase' || doctype === 'refund'
-
+            const isAddition = entry.doctype === 'purchase' || entry.doctype === 'refund'
             const onHandBefore = runningOnHand
+            if (isAddition) { runningOnHand += entry.qty } else { runningOnHand -= entry.qty }
 
-            if (isAddition) {
-                runningOnHand += entry.qty
-            } else {
-                runningOnHand -= entry.qty
-            }
-
-            // Update the productData.onHand snapshot stored on this entry
-            await DocItems.findByIdAndUpdate(entry._id, {
-                $set: { 'productData.onHand': onHandBefore }
-            })
+            let productData = {}
+            try { productData = JSON.parse(entry.productData || '{}') } catch (_) {}
+            productData.onHand = onHandBefore
+            await db.query('UPDATE docitems SET productData = ? WHERE id = ?', [JSON.stringify(productData), entry.id])
         }
 
-        // Update the product's current onHand to the final running total
         await Product.findByIdAndUpdate(id, { onHand: runningOnHand })
 
         res.json({

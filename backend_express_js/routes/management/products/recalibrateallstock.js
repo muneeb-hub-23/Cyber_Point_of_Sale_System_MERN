@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const DocItems = require('../../../models/DocumentItem')
+const db = require('../../../db')
 const Product = require('../../../models/Product')
 
 router.get('/', async (req, res) => {
@@ -29,37 +29,37 @@ router.get('/', async (req, res) => {
         for (let i = 0; i < products.length; i++) {
             const product = products[i]
 
-            const allEntries = await DocItems.find({ product: product._id })
-                .populate('document')
-                .sort({ createdAt: 1 })
+            const [allEntries] = await db.query(
+                `SELECT di.*, doc.doctype
+                 FROM docitems di
+                 LEFT JOIN documents doc ON doc.id = di.document
+                 WHERE di.product = ?
+                 ORDER BY di.createdAt ASC`,
+                [product.id]
+            )
 
-            // Delete orphan entries whose parent document was deleted (old glitches)
-            const orphanIds = allEntries.filter(e => !e.document).map(e => e._id)
+            const orphanIds = allEntries.filter(e => !e.doctype).map(e => e.id)
             if (orphanIds.length > 0) {
-                await DocItems.deleteMany({ _id: { $in: orphanIds } })
+                await db.query(`DELETE FROM docitems WHERE id IN (?)`, [orphanIds])
                 totalOrphansDeleted += orphanIds.length
             }
 
-            const entries = allEntries.filter(e => e.document)
-
+            const entries = allEntries.filter(e => e.doctype)
             let runningOnHand = 0
 
             for (let entry of entries) {
-                const doctype = entry.document.doctype
-                const isAddition = doctype === 'purchase' || doctype === 'refund'
+                const isAddition = entry.doctype === 'purchase' || entry.doctype === 'refund'
                 const onHandBefore = runningOnHand
-                if (isAddition) {
-                    runningOnHand += entry.qty
-                } else {
-                    runningOnHand -= entry.qty
-                }
-                await DocItems.findByIdAndUpdate(entry._id, {
-                    $set: { 'productData.onHand': onHandBefore }
-                })
+                if (isAddition) { runningOnHand += entry.qty } else { runningOnHand -= entry.qty }
+
+                let productData = {}
+                try { productData = JSON.parse(entry.productData || '{}') } catch (_) {}
+                productData.onHand = onHandBefore
+                await db.query('UPDATE docitems SET productData = ? WHERE id = ?', [JSON.stringify(productData), entry.id])
                 totalEntriesProcessed++
             }
 
-            await Product.findByIdAndUpdate(product._id, { onHand: runningOnHand })
+            await Product.findByIdAndUpdate(product.id, { onHand: runningOnHand })
             productsProcessed++
 
             send({

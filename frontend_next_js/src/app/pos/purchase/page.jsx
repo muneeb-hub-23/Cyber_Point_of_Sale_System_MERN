@@ -848,7 +848,7 @@ const Page = () => {
                             }} className='text-4xl rounded-full text-green-500 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300' />
                             <select value={selectedBill && selectedBill._id} onChange={handleBillChange} className='w-7/12 p-3 text-green-400 text-lg bg-transparent outline-1 outline-slate-500 m-3 border-slate-500 border-2 hover:shadow-[0_0_10px_rgba(236,72,153,0.6),0_0_20px_rgba(236,72,153,0.6)] transition-shadow duration-300' name="a" id="a">
                                 {bills && bills.length > 0 && bills.map((bi, num) => (
-                                    <option key={bi._id} value={bi._id}>{bi.customer && bi.customer.customerName.length > 0 ? bi.customer.customerName : 'No Name ' + num}</option>
+                                    <option key={bi._id} value={bi._id}>{bi.customer && bi.customer.customerName ? bi.customer.customerName : 'No Name ' + num}</option>
                                 ))}
                             </select>
 

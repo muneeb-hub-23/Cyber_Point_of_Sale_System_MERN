@@ -82,31 +82,54 @@ router.get('/', async (req, res) => {
             docQuery.linkedShop = shopid;
         }
 
-        // Get purchase documents
-        const documents = await Document.find(docQuery).populate('linkedShop');
+        // Get purchase documents (linkedShop is a plain ID string, no populate needed)
+        const documents = await Document.find(docQuery);
         const documentIds = documents.map(doc => doc._id);
+        const docMap = {}; documents.forEach(d => { docMap[d.id] = d })
 
         console.log(`Found ${documents.length} purchase documents`);
 
-        // Get document items with product details
-        let docItems = await DocItem.find({ document: { $in: documentIds } })
-            .populate({
-                path: 'product',
-                populate: [
-                    { path: 'suplier', model: 'customers' },
-                    { path: 'shop', model: 'shops' }
-                ]
-            })
-            .populate('document');
+        // Get document items, then manually join product, supplier, shop
+        const db = require('../../../db')
+        let rawItems = await DocItem.find({ document: { $in: documentIds } })
+        // Populate product for each item
+        const productIds = [...new Set(rawItems.map(i => i.product).filter(Boolean))]
+        let products = productIds.length
+            ? (await db.query('SELECT * FROM products WHERE id IN (?)', [productIds]))[0]
+            : []
+        const productMap = {}; products.forEach(p => { productMap[p.id] = p })
+        // Populate supplier (customer) for products that have one
+        const supplierIds = [...new Set(products.map(p => p.suplier).filter(Boolean))]
+        let suppliers = supplierIds.length
+            ? (await db.query('SELECT * FROM customers WHERE id IN (?)', [supplierIds]))[0]
+            : []
+        const supplierMap = {}; suppliers.forEach(s => { supplierMap[s.id] = s })
+        // Populate shop for products
+        const shopIds = [...new Set(products.map(p => p.shop).filter(Boolean))]
+        let shopRows = shopIds.length
+            ? (await db.query('SELECT * FROM shops WHERE id IN (?)', [shopIds]))[0]
+            : []
+        const shopMap = {}; shopRows.forEach(s => { shopMap[s.id] = s })
+
+        let docItems = rawItems.map(item => {
+            const product = productMap[item.product] || null
+            if (product) {
+                product.suplier = supplierMap[product.suplier] || null
+                product.shop    = shopMap[product.shop]    || null
+            }
+            item.product  = product
+            item.document = docMap[item.document] || null
+            return item
+        })
 
         console.log(`Found ${docItems.length} purchase items`);
 
         // Filter by supplier if specified
         if (supplierid && supplierid !== 'all') {
             const originalLength = docItems.length;
-            docItems = docItems.filter(item => 
-                item.product && item.product.suplier && 
-                item.product.suplier._id.toString() === supplierid
+            docItems = docItems.filter(item =>
+                item.product && item.product.suplier &&
+                (item.product.suplier.id || item.product.suplier._id || '').toString() === supplierid
             );
             console.log(`Filtered by supplier: ${originalLength} -> ${docItems.length} items`);
         }

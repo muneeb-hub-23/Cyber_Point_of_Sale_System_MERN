@@ -1,37 +1,43 @@
 const express = require('express');
 const router = express.Router();
-const Document = require('../../models/Documents'); // Ensure your schema is correctly defined
+const db = require('../../db');
 
-// POST route to fetch documents
 router.post('/', async (req, res) => {
     try {
         let { sdate, ldate, status, userid, shopid, allusers, docType } = req.body;
 
-
-        // Validate required fields
         if (!sdate || !ldate || !shopid) {
             return res.status(400).json({ error: "Start date (sdate), end date (ldate), and shop ID (shopid) are required." });
         }
 
-        // Build the base query (without date filter)
-        const query = {
-            linkedShop: shopid,
-            doctype:docType,
-            status, // Add status if provided
-            ...(!allusers && userid && { user: userid }) // Add user filter if allusers is false
-        };
+        let sql = `SELECT d.*,
+                          c.id AS custId, c.customerName, c.balance AS custBalance,
+                          u.id AS userId, u.username
+                   FROM documents d
+                   LEFT JOIN customers c ON c.id = d.customer
+                   LEFT JOIN users u ON u.id = d.user
+                   WHERE d.linkedShop = ?
+                     AND d.doctype = ?
+                     AND d.status = ?
+                     AND CAST(d.date AS UNSIGNED) >= ?
+                     AND CAST(d.date AS UNSIGNED) <= ?`
+        const vals = [shopid, docType, status, Number(sdate), Number(ldate)]
 
-        // Fetch documents based on the base query
-        const documents = await Document.find(query).populate('customer').populate('user');
+        if (!allusers && userid) {
+            sql += ' AND d.user = ?'
+            vals.push(userid)
+        }
 
-        // Filter documents by date range
-        const filteredDocuments = documents.filter(doc => {
-            // const docDate = parseInt(doc.date, 10); // Convert document date to a number
-            return parseInt(doc.date) >= sdate && parseInt(doc.date) <= ldate;
-        });
+        const [rows] = await db.query(sql, vals)
+        const documents = rows.map(r => {
+            if (typeof r.payment === 'string') try { r.payment = JSON.parse(r.payment) } catch (_) {}
+            r._id = r.id
+            r.customer = r.custId ? { _id: r.custId, id: r.custId, customerName: r.customerName, balance: r.custBalance } : null
+            r.user = r.userId ? { _id: r.userId, id: r.userId, username: r.username } : null
+            return r
+        })
 
-        // Return the filtered documents
-        res.json(filteredDocuments);
+        res.json(documents);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Server error. Please try again later." });

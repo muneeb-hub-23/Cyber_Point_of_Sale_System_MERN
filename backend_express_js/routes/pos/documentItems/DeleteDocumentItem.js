@@ -10,8 +10,8 @@ router.delete('/', async (req, res) => {
             return res.status(400).json({ success: false, message: "Missing document ID in headers" });
         }
 
-        const data = await DocumentItem.deleteOne({ _id: id });
-        
+        const data = await DocumentItem.deleteOne({ id });
+
         if (data.deletedCount > 0) {
             res.json({ success: true, message: "Document deleted successfully" });
         } else {
