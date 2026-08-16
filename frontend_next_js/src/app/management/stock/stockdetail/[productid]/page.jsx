@@ -17,32 +17,31 @@ const Page = () => {
   const [productData, setProductData] = useState(undefined)
   const [productEntries, setProductEntries] = useState(undefined)
   const [recalibrating, setRecalibrating] = useState(false)
-  const beforeAfter = useMemo(() => {
-    let data = [];
+  const isAddition = (entry) => {
+    if (entry.entryType === 'adjust') return entry.adjustType === 'increase'
+    const doctype = entry.document && entry.document.doctype
+    return doctype === 'purchase' || doctype === 'refund'
+  }
+
+  const rows = useMemo(() => {
     let reference = 0;
 
-    if (productEntries && productEntries.length > 0) {
-      // Only run the loop if productEntries is not empty
-      for (let entry of productEntries) {
-        if (entry.document && entry.document.doctype === "purchase" || entry.document && entry.document.doctype === "refund") {
-          let temp = reference;
-          reference += entry.qty;
-          data.push({ before: temp, after: reference });
-        } else if (entry.document) {
-          let temp = reference;
-          reference -= entry.qty;
-          data.push({ before: temp, after: reference });
-        } else {
-          let temp = reference;
-          reference += entry.qty;
-          data.push({ before: temp, after: reference });
-        }
-      }
-    }
-
-    // If productEntries is falsy or empty, return an empty array
-    return data;
+    return (productEntries || []).map(entry => {
+      const qty = Number(entry.qty) || 0
+      const before = reference
+      reference = isAddition(entry) ? reference + qty : reference - qty
+      return { entry, before, after: reference, addition: isAddition(entry) }
+    })
   }, [productEntries]);
+
+  const visibleRows = useMemo(() => {
+    if (docType === 'all') return rows
+    return rows.filter(({ entry }) => (
+      entry.entryType === 'adjust'
+        ? docType === 'adjust'
+        : entry.document && entry.document.doctype === docType
+    ))
+  }, [rows, docType]);
 
 
   const getProductData = async (pid) => {
@@ -158,6 +157,7 @@ const Page = () => {
             <option value="refund">Refund</option>
             <option value="loss">Loss</option>
             <option value="stockreturn">Stock Return</option>
+            <option value="adjust">Stock Adjustment</option>
           </select>
         </div>
         <div className='p-2 m-2 rounded-md bg-boxdark border-blue-600 border'>
@@ -210,14 +210,22 @@ const Page = () => {
           <div className="p-1 w-1/12">Sale</div>
           <div className="p-1 w-1/12">Sale Total</div>
         </div>
-        {productEntries && productEntries.map((p, key) => (
-          <div key={key} className={`flex items-center ${key % 2 === 0 ? "bg-boxdark" : "bg-boxdark-2"} my-1 text-center text-white`}>
-            <div className="p-1 w-2/12 text-left pl-3">{p.document && formatDateString(p.document.date)}</div>
-            <div className="w-1/12 text-left">{p.document && p.document.doctype || "purchase"}</div>
-            <div className="p-1 w-2/12 text-left">{p.document && p.document.customer && p.document.customer.customerName || "No Customer"}</div>
-            <div className="p-1 w-1/12">{p.productData.onHand}</div>
-            <div className={`p-1 w-1/12 ${p.document && p.document.doctype === 'purchase' | p.document.doctype === 'refund' ? "text-green-600" : "text-rose-600"}`}>{p.qty}</div>
-            <div className="p-1 w-1/12">{p.document && p.document.doctype === 'purchase' | p.document.doctype === 'refund' ? p.productData.onHand+p.qty : p.productData.onHand-p.qty}</div>
+        {visibleRows.map(({ entry: p, before, after, addition }, key) => (
+          <div key={p._id || key} className={`flex items-center ${key % 2 === 0 ? "bg-boxdark" : "bg-boxdark-2"} my-1 text-center text-white`}>
+            <div className="p-1 w-2/12 text-left pl-3">{p.document && p.document.date && formatDateString(p.document.date)}</div>
+            <div className="w-1/12 text-left">
+              {p.entryType === 'adjust'
+                ? <span className='text-amber-400'>adjust</span>
+                : (p.document && p.document.doctype || "purchase")}
+            </div>
+            <div className="p-1 w-2/12 text-left">
+              {p.entryType === 'adjust'
+                ? `${p.reason || 'Stock Adjustment'}${p.requestedByName ? ` (${p.requestedByName})` : ''}`
+                : (p.document && p.document.customer && p.document.customer.customerName || "No Customer")}
+            </div>
+            <div className="p-1 w-1/12">{before}</div>
+            <div className={`p-1 w-1/12 ${addition ? "text-green-600" : "text-rose-600"}`}>{addition ? '+' : '-'}{p.qty}</div>
+            <div className="p-1 w-1/12">{after}</div>
             <div className="p-1 w-1/12">{p.costExpense}</div>
             <div className="p-1 w-1/12">{p.costamount}</div>
             <div className="p-1 w-1/12">{p.sale}</div>

@@ -27,24 +27,45 @@ router.post('/', async (req, res) => {
             await db.query(`DELETE FROM docitems WHERE id IN (?)`, [orphanIds])
         }
 
-        const entries = allEntries.filter(e => e.doctype)
+        const docEntries = allEntries.filter(e => e.doctype).map(e => ({ kind: 'docitem', row: e, at: e.createdAt }))
 
-        if (!entries || entries.length === 0) {
+        // Approved stock adjustments move stock too, so they take part in the running total
+        const [adjustments] = await db.query(
+            `SELECT * FROM stockadjustrequests WHERE product = ? AND status = 'approved'`,
+            [id]
+        )
+        const adjustEntries = adjustments.map(a => ({ kind: 'adjust', row: a, at: a.updatedAt || a.createdAt }))
+
+        const entries = [...docEntries, ...adjustEntries]
+            .sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())
+
+        if (entries.length === 0) {
             await Product.findByIdAndUpdate(id, { onHand: 0 })
-            return res.json({ message: 'No valid entries — stock set to 0', finalOnHand: 0, entriesProcessed: 0, orphansDeleted: orphanIds.length })
+            return res.json({ message: 'No valid entries — stock set to 0', finalOnHand: 0, entriesProcessed: 0, adjustmentsProcessed: 0, orphansDeleted: orphanIds.length })
         }
 
         let runningOnHand = 0
 
         for (let entry of entries) {
-            const isAddition = entry.doctype === 'purchase' || entry.doctype === 'refund'
             const onHandBefore = runningOnHand
-            if (isAddition) { runningOnHand += entry.qty } else { runningOnHand -= entry.qty }
+
+            if (entry.kind === 'adjust') {
+                const qty = Number(entry.row.qty)
+                runningOnHand += entry.row.adjustType === 'increase' ? qty : -qty
+                await db.query(
+                    'UPDATE stockadjustrequests SET onHandBefore = ?, onHandAfter = ? WHERE id = ?',
+                    [onHandBefore, runningOnHand, entry.row.id]
+                )
+                continue
+            }
+
+            const isAddition = entry.row.doctype === 'purchase' || entry.row.doctype === 'refund'
+            if (isAddition) { runningOnHand += Number(entry.row.qty) } else { runningOnHand -= Number(entry.row.qty) }
 
             let productData = {}
-            try { productData = JSON.parse(entry.productData || '{}') } catch (_) {}
+            try { productData = JSON.parse(entry.row.productData || '{}') } catch (_) {}
             productData.onHand = onHandBefore
-            await db.query('UPDATE docitems SET productData = ? WHERE id = ?', [JSON.stringify(productData), entry.id])
+            await db.query('UPDATE docitems SET productData = ? WHERE id = ?', [JSON.stringify(productData), entry.row.id])
         }
 
         await Product.findByIdAndUpdate(id, { onHand: runningOnHand })
@@ -53,6 +74,7 @@ router.post('/', async (req, res) => {
             message: 'Stock recalibrated successfully',
             finalOnHand: runningOnHand,
             entriesProcessed: entries.length,
+            adjustmentsProcessed: adjustEntries.length,
             orphansDeleted: orphanIds.length
         })
 
