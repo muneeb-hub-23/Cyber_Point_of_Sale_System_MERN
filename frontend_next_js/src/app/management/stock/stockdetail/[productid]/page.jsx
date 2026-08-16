@@ -18,7 +18,7 @@ const Page = () => {
   const [productEntries, setProductEntries] = useState(undefined)
   const [recalibrating, setRecalibrating] = useState(false)
   const isAddition = (entry) => {
-    if (entry.entryType === 'adjust') return entry.adjustType === 'increase'
+    if (entry.entryType === 'adjustment') return entry.adjustType === 'increase'
     const doctype = entry.document && entry.document.doctype
     return doctype === 'purchase' || doctype === 'refund'
   }
@@ -37,8 +37,8 @@ const Page = () => {
   const visibleRows = useMemo(() => {
     if (docType === 'all') return rows
     return rows.filter(({ entry }) => (
-      entry.entryType === 'adjust'
-        ? docType === 'adjust'
+      entry.entryType === 'adjustment'
+        ? docType === 'adjuststock'
         : entry.document && entry.document.doctype === docType
     ))
   }, [rows, docType]);
@@ -157,7 +157,7 @@ const Page = () => {
             <option value="refund">Refund</option>
             <option value="loss">Loss</option>
             <option value="stockreturn">Stock Return</option>
-            <option value="adjust">Stock Adjustment</option>
+            <option value="adjuststock">Stock Adjustment</option>
           </select>
         </div>
         <div className='p-2 m-2 rounded-md bg-boxdark border-blue-600 border'>
@@ -214,13 +214,13 @@ const Page = () => {
           <div key={p._id || key} className={`flex items-center ${key % 2 === 0 ? "bg-boxdark" : "bg-boxdark-2"} my-1 text-center text-white`}>
             <div className="p-1 w-2/12 text-left pl-3">{p.document && p.document.date && formatDateString(p.document.date)}</div>
             <div className="w-1/12 text-left">
-              {p.entryType === 'adjust'
+              {p.entryType === 'adjustment'
                 ? <span className='text-amber-400'>adjust</span>
                 : (p.document && p.document.doctype || "purchase")}
             </div>
             <div className="p-1 w-2/12 text-left">
-              {p.entryType === 'adjust'
-                ? `${p.reason || 'Stock Adjustment'}${p.requestedByName ? ` (${p.requestedByName})` : ''}`
+              {p.entryType === 'adjustment'
+                ? `${p.reason || 'Stock Adjustment'}${p.requestedBy ? ` (${p.requestedBy})` : ''}`
                 : (p.document && p.document.customer && p.document.customer.customerName || "No Customer")}
             </div>
             <div className="p-1 w-1/12">{before}</div>

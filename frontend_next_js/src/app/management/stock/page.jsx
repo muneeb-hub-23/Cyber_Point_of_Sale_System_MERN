@@ -85,6 +85,34 @@ const Page = () => {
         }
     };
 
+    const exportToCSV = () => {
+        const shopName = selectedShop ? selectedShop.shopName : 'stock'
+        const headers = ['Item Code', 'Product Name', 'Category', 'Supplier', 'OnHand', 'Cost', 'Cost Total', 'Sale', 'Sale Total']
+        const rows = filteredProducts.map(p => [
+            p.itemCode,
+            `"${(p.name || '').replace(/"/g, '""')}"`,
+            `"${(p.category?.name || '').replace(/"/g, '""')}"`,
+            `"${(p.suplier?.customerName || '').replace(/"/g, '""')}"`,
+            p.onHand.toFixed(2),
+            p.cost.toFixed(2),
+            (p.cost * p.onHand).toFixed(2),
+            p.sale.toFixed(2),
+            (p.sale * p.onHand).toFixed(2),
+        ])
+        const totalCostVal = filteredProducts.reduce((s, p) => s + p.cost * p.onHand, 0)
+        const totalSaleVal = filteredProducts.reduce((s, p) => s + p.sale * p.onHand, 0)
+        rows.push(['', 'TOTAL', '', '', filteredProducts.length, '', totalCostVal.toFixed(2), '', totalSaleVal.toFixed(2)])
+
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${shopName}_stock_${new Date().toISOString().slice(0, 10)}.csv`
+        a.click()
+        URL.revokeObjectURL(url)
+    }
+
     const recalibrateAllStock = () => {
         if (!confirm('This will recalibrate OnHand stock for ALL products across all shops. Continue?')) return
         setRecalibratingAll(true)
@@ -195,7 +223,14 @@ if(user && user.permissions.includes("stock")){
                             <Searchoption data={customers} setData={setSelectedCustomer} onChange={(e)=>{handleChange(e,'customer')}} type="customer" />
                         </div>
                     </div>
-                    <div className="flex justify-end px-2 pb-2">
+                    <div className="flex justify-end gap-2 px-2 pb-2">
+                        <button
+                            onClick={exportToCSV}
+                            disabled={filteredProducts.length === 0}
+                            className='px-4 py-2 rounded-md bg-green-700 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold border border-green-500 transition-colors text-sm'
+                        >
+                            Export CSV
+                        </button>
                         <button
                             onClick={recalibrateAllStock}
                             disabled={recalibratingAll}

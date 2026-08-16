@@ -4,7 +4,7 @@ const db = require('../../../db')
 
 function toDocDate(value) {
     const date = value ? new Date(value) : new Date()
-    if (isNaN(date.getTime())) return ''
+    if (isNaN(date.getTime())) return null
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     return `${date.getFullYear()}${month}${day}`
@@ -13,6 +13,7 @@ function toDocDate(value) {
 router.get('/',async (req,res)=>{
     let {id} = req.headers
     try {
+        // Fetch regular doc item entries
         const [rows] = await db.query(
             `SELECT di.*,
                     doc.id AS docId, doc.doctype, doc.status AS docStatus, doc.date AS docDate,
@@ -25,11 +26,11 @@ router.get('/',async (req,res)=>{
              ORDER BY di.createdAt ASC`,
             [id]
         )
-        const data = rows.map(r => {
+        const docEntries = rows.map(r => {
             if (typeof r.productData === 'string') try { r.productData = JSON.parse(r.productData) } catch (_) {}
             if (typeof r.discount === 'string') try { r.discount = JSON.parse(r.discount) } catch (_) {}
             r._id = r.id
-            r.entryType = 'document'
+            r.entryType = 'docitem'
             r.document = {
                 _id: r.docId, id: r.docId,
                 doctype: r.doctype, status: r.docStatus, date: r.docDate,
@@ -38,56 +39,62 @@ router.get('/',async (req,res)=>{
             return r
         })
 
-        const [adjustRows] = await db.query(
+        // Fetch approved stock adjustment entries
+        const [adjRows] = await db.query(
             `SELECT sar.*,
-                    ru.username AS requestedByName,
-                    rv.username AS reviewedByName,
+                    u.username AS requestedByUsername,
+                    rv.username AS reviewedByUsername,
                     p.cost AS productCost, p.sale AS productSale
              FROM stockadjustrequests sar
-             LEFT JOIN users ru ON ru.id = sar.requestedBy
+             LEFT JOIN users u ON u.id = sar.requestedBy
              LEFT JOIN users rv ON rv.id = sar.reviewedBy
              LEFT JOIN products p ON p.id = sar.product
              WHERE sar.product = ? AND sar.status = 'approved'
              ORDER BY sar.updatedAt ASC`,
             [id]
         )
-        const adjustments = adjustRows.map(a => {
-            const qty = Number(a.qty)
-            const cost = Number(a.productCost || 0)
-            const sale = Number(a.productSale || 0)
+        const adjEntries = adjRows.map(r => {
+            const qty = parseFloat(r.qty)
+            const cost = Number(r.productCost || 0)
+            const sale = Number(r.productSale || 0)
+            const at = r.updatedAt || r.createdAt
             return {
-                _id: a.id,
-                id: a.id,
-                entryType: 'adjust',
-                adjustType: a.adjustType,
-                reason: a.reason,
-                reviewNote: a.reviewNote,
-                requestedByName: a.requestedByName || null,
-                reviewedByName: a.reviewedByName || null,
-                product: a.product,
-                productData: { onHand: Number(a.onHandBefore) },
+                _id: r.id,
+                id: r.id,
+                entryType: 'adjustment',
+                adjustType: r.adjustType,
                 qty,
+                onHandBefore: parseFloat(r.onHandBefore),
+                onHandAfter: parseFloat(r.onHandAfter),
+                reason: r.reason,
+                status: r.status,
+                requestedBy: r.requestedByUsername || r.requestedBy,
+                reviewedBy: r.reviewedByUsername || r.reviewedBy,
+                reviewNote: r.reviewNote,
+                createdAt: at,
+                updatedAt: r.updatedAt,
+                // Shape document-like fields so the frontend can display uniformly
+                document: {
+                    _id: null,
+                    id: null,
+                    doctype: 'adjuststock',
+                    status: r.status,
+                    date: toDocDate(at),
+                    customer: null,
+                },
+                // productData stub so frontend doesn't crash on p.productData.onHand
+                productData: { onHand: parseFloat(r.onHandBefore) },
                 cost,
                 costExpense: cost,
                 costamount: cost * qty,
                 sale,
                 saleamount: sale * qty,
-                createdAt: a.updatedAt || a.createdAt,
-                document: {
-                    _id: null,
-                    id: null,
-                    doctype: 'adjust',
-                    status: a.status,
-                    date: toDocDate(a.updatedAt || a.createdAt),
-                    customer: null
-                }
             }
         })
 
-        const merged = [...data, ...adjustments].sort(
-            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        )
-        res.json(merged)
+        // Merge and sort by createdAt ascending
+        const all = [...docEntries, ...adjEntries].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        res.json(all)
     } catch(err) {
         console.error(err)
         res.json([])
