@@ -22,9 +22,12 @@ const Page = () => {
     let reference = 0;
 
     if (productEntries && productEntries.length > 0) {
-      // Only run the loop if productEntries is not empty
       for (let entry of productEntries) {
-        if (entry.document && entry.document.doctype === "purchase" || entry.document && entry.document.doctype === "refund") {
+        const doctype = entry.document?.doctype
+        if (doctype === 'adjuststock') {
+          // Use the stored onHandBefore/After directly
+          data.push({ before: entry.onHandBefore, after: entry.onHandAfter });
+        } else if (doctype === 'purchase' || doctype === 'refund') {
           let temp = reference;
           reference += entry.qty;
           data.push({ before: temp, after: reference });
@@ -40,7 +43,6 @@ const Page = () => {
       }
     }
 
-    // If productEntries is falsy or empty, return an empty array
     return data;
   }, [productEntries]);
 
