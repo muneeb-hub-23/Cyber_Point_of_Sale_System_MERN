@@ -21,13 +21,13 @@ const SearchOption = ({ data, setCurrentCustomer, currentCustomer }) => {
   }, [wrapperRef]);
 
   // Function to filter data by name or phone
-  const filteredData = data
+  const filteredData = data && searchTerm
     ? data.filter(
         (item) =>
-          item.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.customerMobileNumber.toString().includes(searchTerm)
+          (item.customerName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (item.customerMobileNumber?.toString().includes(searchTerm))
       )
-    : [];
+    : data || [];
 
   // Function to handle when a user clicks on an item
   const handleItemClick = (item) => {

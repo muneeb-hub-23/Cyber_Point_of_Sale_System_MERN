@@ -31,7 +31,10 @@ function _buildWhere(filter) {
     const vals = []
     for (const [k, v] of Object.entries(filter)) {
         if (v && typeof v === 'object' && !Array.isArray(v)) {
-            if (v.$in) { conditions.push(`p.\`${k}\` IN (?)`); vals.push(v.$in) }
+            if (v.$in) {
+                if (v.$in.length === 0) { conditions.push('1 = 0') }
+                else { conditions.push(`p.\`${k}\` IN (?)`); vals.push(v.$in) }
+            }
         } else {
             conditions.push(`p.\`${k}\` = ?`); vals.push(v)
         }

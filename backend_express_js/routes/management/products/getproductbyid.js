@@ -4,7 +4,7 @@ const Product = require('../../../models/Product')
 
 router.get('/',async (req,res)=>{
     let {id} = req.headers
-    let data = await Product.findById({_id:id})
+    let data = await Product.findById(id)
     if(data){
         res.json(data)
     }else{

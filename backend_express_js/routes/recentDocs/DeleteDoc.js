@@ -14,9 +14,8 @@ router.delete('/', async (req, res) => {
     try {
         // Atomically claim the document for deletion — prevents double-delete on retry
         const claimed = await Document.findOneAndUpdate(
-            { _id: docid, status: { $in: ['processed', 'pending', 'open', 'draw'] } },
-            { status: 'deleting' },
-            { new: false }
+            { id: docid, status: { $in: ['processed', 'pending', 'open', 'draw'] } },
+            { status: 'deleting' }
         );
         if (!claimed) {
             // Already being deleted or doesn't exist
@@ -31,11 +30,11 @@ router.delete('/', async (req, res) => {
         const productUpdates = [];
         if (['sale', 'stockreturn', 'loss'].includes(claimed.doctype)) {
             for (const entry of docEntries) {
-                productUpdates.push({ updateOne: { filter: { _id: entry.product }, update: { $inc: { onHand: Number(entry.qty) } } } });
+                productUpdates.push({ updateOne: { filter: { id: entry.product }, update: { $inc: { onHand: Number(entry.qty) } } } });
             }
         } else if (['refund', 'purchase'].includes(claimed.doctype)) {
             for (const entry of docEntries) {
-                productUpdates.push({ updateOne: { filter: { _id: entry.product }, update: { $inc: { onHand: -Number(entry.qty) } } } });
+                productUpdates.push({ updateOne: { filter: { id: entry.product }, update: { $inc: { onHand: -Number(entry.qty) } } } });
             }
         }
         if (productUpdates.length) await Product.bulkWrite(productUpdates);
@@ -78,7 +77,7 @@ router.delete('/', async (req, res) => {
         // Rollback status so it can be retried
         try {
             await Document.findOneAndUpdate(
-                { _id: docid, status: 'deleting' },
+                { id: docid, status: 'deleting' },
                 { status: 'processed' }
             );
         } catch (rb) { console.error('Rollback failed:', rb); }

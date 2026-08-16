@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
         }
 
         await db.withTransaction(async (conn) => {
-            let allItems = await DocItem.find({ document: selectedBill._id }, conn)
+            let allItems = await DocItem.find({ document: selectedBill._id }, conn).populate('product')
             const documentsToProcess = []
 
             for (const shopEntry of balanceTotal) {
@@ -133,7 +133,7 @@ router.post('/', async (req, res) => {
 
                 const entries = thisShopData.shopPayments.map(p => ({
                     user, customer: customer ? (customer._id || customer.id) : null,
-                    date, type: 'Sale', method: p.name, amount: p.amount,
+                    date: formatDateToYYYYMMDD(date), type: 'Sale', method: p.name, amount: p.amount,
                     shop: thisShopData.shop._id || thisShopData.shop.id,
                     document: document.id,
                 }))

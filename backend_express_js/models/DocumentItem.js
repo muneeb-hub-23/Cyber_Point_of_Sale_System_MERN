@@ -166,8 +166,10 @@ function _Chainable(filter, conn) {
                 const conditions = []
                 for (const [k, v] of Object.entries(this._filter)) {
                     if (v && typeof v === 'object' && !Array.isArray(v)) {
-                        if (v.$in) { conditions.push(`\`${k}\` IN (?)`); vals.push(v.$in) }
-                        else       { conditions.push(`\`${k}\` = ?`);    vals.push(v) }
+                        if (v.$in) {
+                            if (v.$in.length === 0) { conditions.push('1 = 0') }
+                            else { conditions.push(`\`${k}\` IN (?)`); vals.push(v.$in) }
+                        } else { conditions.push(`\`${k}\` = ?`);    vals.push(v) }
                     } else {
                         conditions.push(`\`${k}\` = ?`)
                         vals.push(typeof v === 'object' ? (v.id || v._id || v) : v)
