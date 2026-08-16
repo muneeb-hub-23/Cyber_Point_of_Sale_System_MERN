@@ -5,7 +5,6 @@ import { MdAdd } from "react-icons/md";
 import { IoHome } from "react-icons/io5";
 import { FaPeopleRobbery } from "react-icons/fa6";
 import { TiWarning } from "react-icons/ti";
-import { TbHomeOff } from "react-icons/tb";
 import { FaComputer } from "react-icons/fa6";
 import { SiAwssecretsmanager } from "react-icons/si";
 import { FaCashRegister } from "react-icons/fa";
@@ -71,7 +70,7 @@ export const menuGroups = [
                     { label: "Modify User", route: "/users/modifyuser", permission: "modifyuser" },
                     { label: "Delete User", route: "/users/deleteuser", permission: "deleteuser" },]
             },
-            { icon: (<TbHomeOff className="text-2xl" />), label: "Backup / Restore", route: "/dayclose", permission: "dayclose" },
+
 
 
         ],

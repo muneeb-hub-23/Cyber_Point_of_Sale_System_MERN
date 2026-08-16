@@ -7,9 +7,8 @@ router.get('/',async(req,res)=>{
     if(data.length>0){
         res.json(data[0])
     }else{
-        let newValue = new Counter({count:1})
-        let data = await newValue.save()
-        res.json(data)
+        let newValue = await Counter.save({count:1})
+        res.json(newValue)
     }
 })
 
