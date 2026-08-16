@@ -84,8 +84,8 @@ const Page = () => {
     // Filter customers by name or phone
     const filtered = customers.filter(
       (item) =>
-        item.customerName.toLowerCase().includes(searchValue) ||
-        item.customerMobileNumber.toString().includes(searchValue)
+        (item.customerName || '').toLowerCase().includes(searchValue) ||
+        (item.customerMobileNumber != null ? String(item.customerMobileNumber) : '').includes(searchValue)
     );
     setFilteredCustomers(filtered); // Update filtered results
   };
