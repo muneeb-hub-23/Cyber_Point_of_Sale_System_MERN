@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import DefaultLayout from '@/components/Layouts/DefaultLayout'
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb'
 import Menu from '@/components/Menu'
@@ -13,7 +13,8 @@ export default function AdjustStockPage() {
     const { user } = useGlobalState()
     const router = useRouter()
     const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [searched, setSearched] = useState(false)
     const [search, setSearch] = useState('')
     const [adjustValues, setAdjustValues] = useState({})
     const [submitting, setSubmitting] = useState({})
@@ -24,21 +25,26 @@ export default function AdjustStockPage() {
         setTimeout(() => setToast(null), 3000)
     }
 
-    useEffect(() => {
-        fetch(`${apiaddress}/management/products/getallproducts`)
-            .then(r => r.json())
-            .then(data => { setProducts(data); setLoading(false) })
-            .catch(() => setLoading(false))
-    }, [])
-
-    const filtered = useMemo(() => {
-        if (!search.trim()) return products
-        const s = search.toLowerCase()
-        return products.filter(p =>
-            p.name.toLowerCase().includes(s) ||
-            String(p.itemCode).includes(s)
-        )
-    }, [products, search])
+    const searchProducts = async () => {
+        const query = search.trim()
+        if (!query) {
+            setProducts([])
+            setSearched(false)
+            return
+        }
+        setLoading(true)
+        try {
+            const res = await fetch(`${apiaddress}/management/products/searchproducts?query=${encodeURIComponent(query)}`)
+            const data = await res.json()
+            setProducts(Array.isArray(data) ? data : [])
+        } catch {
+            setProducts([])
+            showToast('Network error', 'error')
+        } finally {
+            setSearched(true)
+            setLoading(false)
+        }
+    }
 
     const handleAdjust = async (product, type) => {
         const qty = Number(adjustValues[product._id] || 0)
@@ -94,9 +100,10 @@ export default function AdjustStockPage() {
                     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600">
                         <input
                             type="text"
-                            placeholder="Search by name or item code..."
+                            placeholder="Type item code or name and press Enter..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && searchProducts()}
                             className="w-full max-w-md rounded border border-slate-500 bg-boxdark-2 px-4 py-2 text-white placeholder-slate-400 outline-none focus:border-blue-500"
                         />
                         <Link href="/management/adjuststock/requests">
@@ -118,8 +125,12 @@ export default function AdjustStockPage() {
 
                     {loading ? (
                         <div className="text-center py-20 text-slate-400">Loading products...</div>
+                    ) : !searched ? (
+                        <div className="text-center py-20 text-slate-400">Type an item code or name and press Enter to load a product</div>
+                    ) : products.length === 0 ? (
+                        <div className="text-center py-20 text-slate-400">No products found for &quot;{search}&quot;</div>
                     ) : (
-                        filtered.map((product, idx) => (
+                        products.map((product, idx) => (
                             <div
                                 key={product._id}
                                 className={`flex items-center px-3 py-2 text-sm ${idx % 2 === 0 ? 'bg-boxdark' : 'bg-boxdark-2'}`}
