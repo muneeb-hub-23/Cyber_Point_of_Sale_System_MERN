@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useState, useRef } from 'react'
 import DefaultLayout from '@/components/Layouts/DefaultLayout'
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb'
 import Menu from '@/components/Menu'
@@ -7,46 +7,61 @@ import apiaddress from '@/apirequests/apiaddress'
 import { useGlobalState } from '@/js/globaluser'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 export default function AdjustStockPage() {
     const { user } = useGlobalState()
-    const router = useRouter()
-    const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [search, setSearch] = useState('')
-    const [adjustValues, setAdjustValues] = useState({})
-    const [submitting, setSubmitting] = useState({})
+    const [itemCode, setItemCode] = useState('')
+    const [product, setProduct] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [notFound, setNotFound] = useState(false)
+    const [adjustQty, setAdjustQty] = useState('')
+    const [reason, setReason] = useState('')
+    const [submitting, setSubmitting] = useState(false)
     const [toast, setToast] = useState(null)
+    const qtyRef = useRef(null)
 
     const showToast = (msg, type = 'success') => {
         setToast({ msg, type })
         setTimeout(() => setToast(null), 3000)
     }
 
-    useEffect(() => {
-        fetch(`${apiaddress}/management/products/getallproducts`)
-            .then(r => r.json())
-            .then(data => { setProducts(data); setLoading(false) })
-            .catch(() => setLoading(false))
-    }, [])
+    const searchProduct = async () => {
+        const code = itemCode.trim()
+        if (!code) return
+        setLoading(true)
+        setNotFound(false)
+        setProduct(null)
+        setAdjustQty('')
+        setReason('')
+        try {
+            const res = await fetch(`${apiaddress}/management/products/getproductbyitemcode`, {
+                headers: { itemcode: code }
+            })
+            const data = await res.json()
+            if (data && data._id) {
+                setProduct(data)
+                setTimeout(() => qtyRef.current && qtyRef.current.focus(), 100)
+            } else {
+                setNotFound(true)
+            }
+        } catch {
+            setNotFound(true)
+        } finally {
+            setLoading(false)
+        }
+    }
 
-    const filtered = useMemo(() => {
-        if (!search.trim()) return products
-        const s = search.toLowerCase()
-        return products.filter(p =>
-            p.name.toLowerCase().includes(s) ||
-            String(p.itemCode).includes(s)
-        )
-    }, [products, search])
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') searchProduct()
+    }
 
-    const handleAdjust = async (product, type) => {
-        const qty = Number(adjustValues[product._id] || 0)
+    const handleAdjust = async (type) => {
+        const qty = Number(adjustQty)
         if (!qty || qty <= 0) {
             showToast('Enter a valid quantity greater than 0', 'error')
             return
         }
-        setSubmitting(s => ({ ...s, [product._id]: true }))
+        setSubmitting(true)
         try {
             const res = await fetch(`${apiaddress}/management/products/createadjustrequest`, {
                 method: 'POST',
@@ -55,21 +70,24 @@ export default function AdjustStockPage() {
                     productId: product._id,
                     adjustType: type,
                     qty,
-                    reason: '',
+                    reason: reason.trim(),
                     requestedBy: user._id,
                 })
             })
             const data = await res.json()
             if (res.ok && data.success) {
                 showToast(`Request to ${type} ${qty} of "${product.name}" submitted for approval`)
-                setAdjustValues(v => ({ ...v, [product._id]: '' }))
+                setAdjustQty('')
+                setReason('')
+                setProduct(null)
+                setItemCode('')
             } else {
                 showToast(data.error || 'Failed to submit request', 'error')
             }
-        } catch (err) {
+        } catch {
             showToast('Network error', 'error')
         } finally {
-            setSubmitting(s => ({ ...s, [product._id]: false }))
+            setSubmitting(false)
         }
     }
 
@@ -92,13 +110,24 @@ export default function AdjustStockPage() {
                 <div className="min-h-screen bg-boxdark text-white">
                     {/* Top bar */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600">
-                        <input
-                            type="text"
-                            placeholder="Search by name or item code..."
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-full max-w-md rounded border border-slate-500 bg-boxdark-2 px-4 py-2 text-white placeholder-slate-400 outline-none focus:border-blue-500"
-                        />
+                        <div className="flex items-center gap-3 flex-1">
+                            <input
+                                type="text"
+                                placeholder="Enter product code and press Enter..."
+                                value={itemCode}
+                                onChange={e => { setItemCode(e.target.value); setNotFound(false) }}
+                                onKeyDown={handleKeyDown}
+                                autoFocus
+                                className="w-full max-w-md rounded border border-slate-500 bg-boxdark-2 px-4 py-2 text-white placeholder-slate-400 outline-none focus:border-blue-500"
+                            />
+                            <button
+                                onClick={searchProduct}
+                                disabled={loading}
+                                className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold text-sm border border-blue-400 transition-colors whitespace-nowrap"
+                            >
+                                {loading ? 'Searching...' : 'Search'}
+                            </button>
+                        </div>
                         <Link href="/management/adjuststock/requests">
                             <button className="ml-4 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm border border-blue-400 transition-colors whitespace-nowrap">
                                 View Requests
@@ -106,82 +135,80 @@ export default function AdjustStockPage() {
                         </Link>
                     </div>
 
-                    {/* Header row */}
-                    <div className="flex items-center bg-blue-600 text-white text-sm font-semibold px-3 py-2 mt-2">
-                        <div className="w-12">Image</div>
-                        <div className="flex-1 pl-3">Product Name</div>
-                        <div className="w-24 text-center">Sale Price</div>
-                        <div className="w-24 text-center">On Hand</div>
-                        <div className="w-52 text-center">Adjust Qty</div>
-                        <div className="w-40 text-center">Actions</div>
-                    </div>
+                    {/* Not found message */}
+                    {notFound && (
+                        <div className="text-center py-10 text-red-400 text-lg">
+                            No product found with item code <span className="font-bold">{itemCode}</span>
+                        </div>
+                    )}
 
-                    {loading ? (
-                        <div className="text-center py-20 text-slate-400">Loading products...</div>
-                    ) : (
-                        filtered.map((product, idx) => (
-                            <div
-                                key={product._id}
-                                className={`flex items-center px-3 py-2 text-sm ${idx % 2 === 0 ? 'bg-boxdark' : 'bg-boxdark-2'}`}
-                            >
-                                {/* Image */}
-                                <div className="w-12">
-                                    <Image
-                                        src={`${apiaddress}${product.picture?.[0] || '/images/products/default.png'}`}
-                                        alt={product.name}
-                                        width={40}
-                                        height={40}
-                                        className="rounded object-cover"
-                                    />
+                    {/* Empty state */}
+                    {!product && !notFound && !loading && (
+                        <div className="text-center py-20 text-slate-500 text-lg">
+                            Enter a product code above to get started
+                        </div>
+                    )}
+
+                    {/* Product card */}
+                    {product && (
+                        <div className="max-w-xl mx-auto mt-10 rounded-xl border border-slate-600 bg-boxdark-2 p-6 shadow-lg">
+                            <div className="flex items-center gap-5 mb-6">
+                                <Image
+                                    src={`${apiaddress}${product.picture?.[0] || '/images/products/default.png'}`}
+                                    alt={product.name}
+                                    width={70}
+                                    height={70}
+                                    className="rounded-lg object-cover border border-slate-600"
+                                />
+                                <div>
+                                    <p className="text-xl font-bold text-white">{product.name}</p>
+                                    <p className="text-slate-400 text-sm mt-1">Item Code: <span className="text-blue-400 font-semibold">#{product.itemCode}</span></p>
+                                    <p className="text-slate-400 text-sm">On Hand: <span className="text-yellow-400 font-bold text-base">{product.onHand}</span></p>
+                                    <p className="text-slate-400 text-sm">Sale Price: <span className="text-green-400 font-semibold">{product.sale?.toFixed(2)}</span></p>
                                 </div>
+                            </div>
 
-                                {/* Name */}
-                                <div className="flex-1 pl-3">
-                                    <p className="font-semibold">{product.name}</p>
-                                    <p className="text-slate-400 text-xs">#{product.itemCode}</p>
-                                </div>
-
-                                {/* Sale price */}
-                                <div className="w-24 text-center text-green-400 font-semibold">
-                                    {product.sale?.toFixed(2)}
-                                </div>
-
-                                {/* On hand */}
-                                <div className="w-24 text-center font-bold">
-                                    {product.onHand}
-                                </div>
-
-                                {/* Qty input */}
-                                <div className="w-52 flex justify-center">
+                            <div className="flex flex-col gap-4">
+                                <div>
+                                    <label className="block text-sm text-slate-300 mb-1">Quantity</label>
                                     <input
+                                        ref={qtyRef}
                                         type="number"
                                         min="1"
-                                        value={adjustValues[product._id] || ''}
-                                        onChange={e => setAdjustValues(v => ({ ...v, [product._id]: e.target.value }))}
-                                        placeholder="Qty"
-                                        className="w-24 rounded border border-slate-500 bg-boxdark-2 px-2 py-1 text-white text-center outline-none focus:border-blue-500"
+                                        value={adjustQty}
+                                        onChange={e => setAdjustQty(e.target.value)}
+                                        placeholder="Enter quantity"
+                                        className="w-full rounded border border-slate-500 bg-boxdark px-4 py-2 text-white outline-none focus:border-blue-500"
                                     />
                                 </div>
-
-                                {/* Buttons */}
-                                <div className="w-40 flex gap-2 justify-center">
+                                <div>
+                                    <label className="block text-sm text-slate-300 mb-1">Reason (optional)</label>
+                                    <input
+                                        type="text"
+                                        value={reason}
+                                        onChange={e => setReason(e.target.value)}
+                                        placeholder="Enter reason for adjustment"
+                                        className="w-full rounded border border-slate-500 bg-boxdark px-4 py-2 text-white outline-none focus:border-blue-500"
+                                    />
+                                </div>
+                                <div className="flex gap-3 mt-2">
                                     <button
-                                        disabled={submitting[product._id]}
-                                        onClick={() => handleAdjust(product, 'increase')}
-                                        className="px-3 py-1 rounded bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white font-bold text-sm transition-colors"
+                                        disabled={submitting}
+                                        onClick={() => handleAdjust('increase')}
+                                        className="flex-1 py-2 rounded-lg bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white font-bold text-sm transition-colors"
                                     >
-                                        + Add
+                                        + Add Stock
                                     </button>
                                     <button
-                                        disabled={submitting[product._id]}
-                                        onClick={() => handleAdjust(product, 'decrease')}
-                                        className="px-3 py-1 rounded bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-bold text-sm transition-colors"
+                                        disabled={submitting}
+                                        onClick={() => handleAdjust('decrease')}
+                                        className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-bold text-sm transition-colors"
                                     >
-                                        − Sub
+                                        − Subtract Stock
                                     </button>
                                 </div>
                             </div>
-                        ))
+                        </div>
                     )}
                 </div>
             </DefaultLayout>

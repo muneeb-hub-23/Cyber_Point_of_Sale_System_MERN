@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
             ? onHandBefore + Number(qty)
             : onHandBefore - Number(qty)
 
-        const request = new StockAdjustRequest({
+        const request = await StockAdjustRequest.save({
             product: productId,
             productName: product.name,
             adjustType,
@@ -30,7 +30,6 @@ router.post('/', async (req, res) => {
             requestedBy,
         })
 
-        await request.save()
         res.json({ success: true, request })
     } catch (err) {
         console.error(err)
