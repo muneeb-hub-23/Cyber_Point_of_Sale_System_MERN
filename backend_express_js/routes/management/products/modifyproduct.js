@@ -52,7 +52,7 @@ router.post('/',async (req,res)=>{
         modifiedby,
         category
     })
-    let history = new History({
+    let savedhistory = await History.save({
         id:savedproduct._id,
         name:productName,
         itemCode:code,
@@ -75,7 +75,6 @@ router.post('/',async (req,res)=>{
         createdby,
         category
     })
-    let savedhistory = await history.save()
     if(savedproduct && savedhistory){
         res.json({success:true})
     }else{

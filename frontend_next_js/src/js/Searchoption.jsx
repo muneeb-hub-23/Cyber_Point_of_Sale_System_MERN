@@ -36,8 +36,8 @@ const SearchOption = ({ data,setData,type,onChange }) => {
       return data
         ? data.filter(
             (item) =>
-              item.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              item.customerMobileNumber.toString().includes(searchTerm)
+              (item.customerName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+              (item.customerMobileNumber?.toString() || '').includes(searchTerm)
           )
         : [];
     } else if (type === 'category') {

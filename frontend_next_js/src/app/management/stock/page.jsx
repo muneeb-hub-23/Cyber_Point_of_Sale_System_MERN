@@ -44,7 +44,7 @@ const Page = () => {
             if (searchType === 'name') {
                 return item.name.toLowerCase().includes(searchValue);
             } else if (searchType === 'category') {
-                return item.category.name.toLowerCase().includes(searchValue);
+                return (item.category?.name || '').toLowerCase().includes(searchValue);
             } else if (searchType === 'barcode') {
                 return Number(item.itemCode)===Number(searchValue);
             }
@@ -60,7 +60,9 @@ const Page = () => {
                 return
             }
             const filtered = products.filter((item) => {
-                    return item.suplier._id===e._id;
+                    const pid = item && item.suplier && item.suplier._id ? String(item.suplier._id) : '';
+                    const eid = e && e._id ? String(e._id) : '';
+                    return pid === eid;
             });
             setFilteredProducts(filtered);
 
@@ -279,7 +281,7 @@ if(user && user.permissions.includes("stock")){
                                         <div className="p-1 w-1/12">{product.itemCode}</div>
                                         <div className="p-1 w-2/12">{product.name}</div>
                                         <div className="p-1 w-1/12"><Image alt="icon" height={50} width={50} src={`${apiaddress}${product.picture[0]}`} /></div>
-                                        <div className="p-1 w-1/12">{product.category.name}</div>
+                                        <div className="p-1 w-1/12">{product.category?.name}</div>
                                         <div className="p-1 w-2/12">{product.suplier && product.suplier.customerName}</div>
                                         <div className="p-1 w-1/12">{product.onHand.toFixed(2) }</div>
                                         <div className="p-1 w-1/12">{product.cost.toFixed(2)}</div>

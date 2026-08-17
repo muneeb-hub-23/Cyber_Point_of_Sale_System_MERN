@@ -35,7 +35,7 @@ const Page = () => {
             if (searchType === 'name') {
                 return item.name.toLowerCase().includes(searchValue);
             } else if (searchType === 'category') {
-                return item.category.name.toLowerCase().includes(searchValue);
+                return (item.category?.name || '').toLowerCase().includes(searchValue);
             } else if (searchType === 'barcode') {
                 return Number(item.itemCode)===Number(searchValue);
             }
@@ -185,7 +185,7 @@ const Page = () => {
                                         <td className="p-2">{product.itemCode}</td>
                                         <td className="p-2">{product.name}</td>
                                         <td className="p-2"><Image alt="icon" height={50} width={50} src={`${apiaddress}${product.picture[0]}`} /></td>
-                                        <td className="p-2">{product.category.name}</td>
+                                        <td className="p-2">{product.category?.name}</td>
                                         <td className="p-2">{product.suplier && product.suplier.customerName}</td>
                                         <td className="p-2">{product.cost}</td>
                                         <td className="p-2">{product.kharcha}</td>
