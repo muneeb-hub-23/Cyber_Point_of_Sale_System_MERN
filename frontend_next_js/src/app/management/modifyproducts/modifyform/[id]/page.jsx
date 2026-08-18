@@ -285,7 +285,7 @@ const Page = () => {
         setSelectedShop(data.find((x) => x._id === product.shop));
         setProductName(product.name)
         fetchCategories(product.shop).then((cat) => {
-          setCategory(cat?.find((c) => c._id === product.category));
+          setCategory(cat?.find((c) => (c.id || c._id) === product.category) || '');
         });
         setCode(product.itemCode)
         setBarcode(product.barCode)
@@ -338,7 +338,7 @@ const Page = () => {
       description,
       createdby:productx.createdby,
       modifiedby:user._id,
-      category:category._id,
+      category:category?.id || category?._id || null,
     }
     if(productName.length<3){
       toast.error('Product Name Too Short', {
@@ -376,7 +376,7 @@ const Page = () => {
         theme: "dark",
         transition: Bounce,
       });
-    }else if(category===''){
+    }else if(!category || category===''){
       toast.error('Please Select a Category', {
         position: "top-right",
         autoClose: 5000,
@@ -499,7 +499,7 @@ const Page = () => {
               <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                 Select Supplier
               </label>
-              <Searchoption data={supliersList} setData={setSuplier} type={'customer'} />
+              <Searchoption data={supliersList} setData={setSuplier} type={'customer'} value={suplier} />
             </div>
 
           </div>
@@ -519,7 +519,7 @@ const Page = () => {
             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
               Product Category
             </label>
-            <Searchoption data={categories} setData={setCategory} type={'category'} />
+            <Searchoption data={categories} setData={setCategory} type={'category'} value={category} />
           </div>
           <div className='flex justify-between'>
             <div className='w-1/2'>

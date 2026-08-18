@@ -1,11 +1,25 @@
 import React, { useState, useRef,useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const SearchOption = ({ data,setData,type,onChange }) => {
+const SearchOption = ({ data,setData,type,onChange,value }) => {
   const router = useRouter( )
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
   const [isListVisible, setIsListVisible] = useState(false); // State for list visibility
   const wrapperRef = useRef(null); // Ref for detecting click outside
+
+  // Derive a stable display string from the value object
+  const valueLabel = useMemo(() => {
+    if (!value || typeof value !== 'object') return ''
+    if (type === 'category') return value.name || ''
+    if (type === 'shop')     return value.shopName || ''
+    if (type === 'customer') return value.customerName || ''
+    return ''
+  }, [value, type])
+
+  // Pre-fill the input when an initial value is provided (e.g. on edit pages)
+  useEffect(() => {
+    if (valueLabel) setSearchTerm(valueLabel)
+  }, [valueLabel])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -62,7 +76,7 @@ const SearchOption = ({ data,setData,type,onChange }) => {
     }
     setIsListVisible(false);
     setData(item)
-    onChange(item)
+    onChange?.(item)
 
   
   };
@@ -90,7 +104,7 @@ if(type === 'customer'){
         onChange={(e) =>{
           if(e.target.value.length<1){
             setSearchTerm('')
-            onChange(undefined)
+            onChange?.(undefined)
           }
           setSearchTerm(e.target.value)
         }} // Update search input state
@@ -139,7 +153,7 @@ if(type === 'customer'){
         value={searchTerm}
         onChange={(e) =>{
           if(e.target.value.length<1){
-            onChange(undefined)
+            onChange?.(undefined)
           }
           setSearchTerm(e.target.value)
         }} // Update search input state
@@ -190,7 +204,7 @@ if(type === 'customer'){
         onChange={(e) =>{
           if(e.target.value.length<1){
             setSearchTerm('')
-            onChange(undefined)
+            onChange?.(undefined)
           }
           setSearchTerm(e.target.value)
         }} // Update search input state

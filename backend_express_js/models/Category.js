@@ -1,32 +1,38 @@
 const db = require('../db')
 const { v4: uuidv4 } = require('uuid')
 
+function _parse(row) {
+    if (!row) return null
+    row._id = row.id
+    return row
+}
+
 const Category = {
     async find(filter = {}) {
         const keys = Object.keys(filter)
         if (keys.length === 0) {
             const [rows] = await db.query('SELECT * FROM categories')
-            return rows
+            return rows.map(_parse)
         }
         const where = keys.map(k => `\`${k}\` = ?`).join(' AND ')
         const [rows] = await db.query(`SELECT * FROM categories WHERE ${where}`, Object.values(filter))
-        return rows
+        return rows.map(_parse)
     },
 
     async findById(id) {
         const [rows] = await db.query('SELECT * FROM categories WHERE id = ?', [id])
-        return rows[0] || null
+        return rows[0] ? _parse(rows[0]) : null
     },
 
     async findOne(filter = {}) {
         const keys = Object.keys(filter)
         if (keys.length === 0) {
             const [rows] = await db.query('SELECT * FROM categories LIMIT 1')
-            return rows[0] || null
+            return rows[0] ? _parse(rows[0]) : null
         }
         const where = keys.map(k => `\`${k}\` = ?`).join(' AND ')
         const [rows] = await db.query(`SELECT * FROM categories WHERE ${where} LIMIT 1`, Object.values(filter))
-        return rows[0] || null
+        return rows[0] ? _parse(rows[0]) : null
     },
 
     async save(data) {

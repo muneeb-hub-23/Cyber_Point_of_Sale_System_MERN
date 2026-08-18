@@ -106,13 +106,14 @@ export const getDocumentItems = async (document, token) => {
     return parsed
 }
 export const changeQtyOfItem = async (id, newqty, token) => {
+    const itemId = typeof id === 'object' && id !== null ? (id._id || id.id) : id
     let data = await fetch(apiaddress + '/pos/documentitems/changeitemqty', {
         method: "POST",
         headers: {
             'content-type': 'application/json',
             token
         },
-        body: JSON.stringify({ id, qty: newqty })
+        body: JSON.stringify({ id: itemId, qty: newqty })
 
     })
     let parsed = await data.json()

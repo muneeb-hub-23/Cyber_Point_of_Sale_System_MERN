@@ -4,7 +4,8 @@ const DocumentItem = require('../../../models/DocumentItem');
 
 router.post('/', async (req, res) => {
     try {
-        const { id, qty } = req.body;
+        const { id: rawId, qty } = req.body;
+        const id = typeof rawId === 'object' && rawId !== null ? (rawId.id || rawId._id) : rawId;
         const previousItem = await DocumentItem.findById(id);
 
         if (!previousItem) {

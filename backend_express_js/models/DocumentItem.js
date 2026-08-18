@@ -54,7 +54,8 @@ const DocItem = {
     },
 
     async findById(id, conn) {
-        const [rows] = await q(conn, 'SELECT * FROM docitems WHERE id = ?', [id])
+        const idStr = typeof id === 'object' && id !== null ? (id.id || id._id) : id
+        const [rows] = await q(conn, 'SELECT * FROM docitems WHERE id = ?', [idStr])
         return rows[0] ? _parse(rows[0]) : null
     },
 
