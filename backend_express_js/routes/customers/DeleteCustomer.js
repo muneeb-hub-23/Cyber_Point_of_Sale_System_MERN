@@ -32,7 +32,7 @@ router.delete('/', async (req, res) => {
     }
 
     // Now delete the customer
-    const deletedItem = await Customer.deleteOne({ _id: req.headers.customerid });
+    const deletedItem = await Customer.deleteOne({ id: req.headers.customerid });
 
     if (deletedItem.deletedCount > 0) {
       // Decrement the total customers count from the shop

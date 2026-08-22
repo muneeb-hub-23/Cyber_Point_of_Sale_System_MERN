@@ -8,7 +8,7 @@ router.delete('/:id', async (req, res) => {
 
   try {
     // Find the customer group by ID and delete it
-    const deletedGroup = await CustomerGroup.deleteOne({ _id: id });
+    const deletedGroup = await CustomerGroup.deleteOne({ id: id });
 
     // If no group is found, return an error
     if (deletedGroup.deletedCount === 0) {
