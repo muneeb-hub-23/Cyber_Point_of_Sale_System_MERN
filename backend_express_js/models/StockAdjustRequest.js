@@ -44,7 +44,7 @@ function _attach(row) {
     row.populate = () => row
     // Instance .save() for mutation patterns like request.status = 'approved'; await request.save()
     row.save = async () => {
-        const { save: _s, populate: _p, _id, ...data } = row
+        const { save: _s, populate: _p, _id, createdAt: _c, updatedAt: _u, ...data } = row
         const keys = Object.keys(data).filter(k => k !== 'id')
         const set = keys.map(k => `\`${k}\` = ?`).join(', ')
         await db.query(`UPDATE stockadjustrequests SET ${set} WHERE id = ?`, [...keys.map(k => data[k]), row.id])
