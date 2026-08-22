@@ -198,8 +198,8 @@ if(user && user.permissions.includes("modifyproducts")){
                                     <tr key={product._id} className="shadow-3 py-3 dark:hover:bg-slate-500 hover:bg-blue-200 font-bold cursor-pointer">
                                         <td className="p-2 w-1/12">{product.itemCode}</td>
                                         <td className="p-2 w-3/12">{product.name}</td>
-                                        <td className="p-2 w-1/12"><Image alt='icon' className='h-auto w-auto' height={50} width={50} src={apiaddress + product.picture[0]} /></td>
-                                        <td className="p-2 w-1/12">{product.category.name}</td>
+                                        <td className="p-2 w-1/12"><Image alt='icon' className='h-auto w-auto' height={50} width={50} src={apiaddress + product.picture?.[0]} /></td>
+                                        <td className="p-2 w-1/12">{product.category?.name}</td>
                                         <td className="p-2 w-2/12">{product.suplier && product.suplier.customerName && product.suplier.customerName}</td>
                                         <td className="p-2 w-2/12">
                                         <button onClick={() => router.push(`/management/modifyproducts/modifyform/${product._id}`)} className="bg-blue-500 text-white w-1/2 inline m-3 px-2 py-1 rounded">
