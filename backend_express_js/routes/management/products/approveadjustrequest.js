@@ -16,15 +16,18 @@ router.post('/', async (req, res) => {
         const product = await Product.findById(request.product)
         if (!product) return res.status(404).json({ error: 'Product not found' })
 
+        const onHandBefore = Number(product.onHand)
+        const qty = Number(request.qty)
         const newOnHand = request.adjustType === 'increase'
-            ? product.onHand + request.qty
-            : product.onHand - request.qty
+            ? onHandBefore + qty
+            : onHandBefore - qty
 
         await Product.findByIdAndUpdate(request.product, { onHand: newOnHand })
 
         request.status = 'approved'
         request.reviewedBy = reviewedBy || null
         request.reviewNote = reviewNote || ''
+        request.onHandBefore = onHandBefore
         request.onHandAfter = newOnHand
         await request.save()
 
