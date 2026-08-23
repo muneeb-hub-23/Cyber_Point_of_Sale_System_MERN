@@ -28,6 +28,7 @@ router.post('/', async (req, res) => {
             onHandAfter,
             reason: reason || '',
             requestedBy,
+            status: 'pending',
         })
 
         res.json({ success: true, request })
