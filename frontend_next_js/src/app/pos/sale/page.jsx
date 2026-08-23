@@ -1281,7 +1281,7 @@ const Page = () => {
                                             width={70}
                                             className="mx-auto hover:scale-150"
                                             alt="Product"
-                                            src={`${apiaddress}${item.productData.picture[0]}`}
+                                            src={`${apiaddress}${item.productData.picture?.[0] || '/images/products/default.png'}`}
                                         />
                                     </div>
                                     <div className="w-3/12 p-2 text-white">{item.productData.name}</div>
