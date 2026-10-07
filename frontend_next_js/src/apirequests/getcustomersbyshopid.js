@@ -105,7 +105,7 @@ export const fetchTransactions = async (shopid, page = 1, limit = 10, token) => 
     });
 
     const parsedData = await data.json();
-    return parsedData.reverse();  // Optionally reverse the order, as you're doing in the original function
+    return parsedData;
   } catch (error) {
     console.error('Error fetching transactions:', error);
     throw error;
@@ -120,7 +120,7 @@ export const fetchTransactionsByID = async (customerid, token) => {
     }
   })
   let parsed = await data.json()
-  return parsed.reverse()
+  return parsed
 }
 export const formatDateTime = (dateString) => {
   // Parse the date string into a Date object

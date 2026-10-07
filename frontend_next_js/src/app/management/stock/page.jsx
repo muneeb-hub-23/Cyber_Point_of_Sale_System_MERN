@@ -9,11 +9,13 @@ import apiaddress from '@/apirequests/apiaddress';
 import { MdOutlineCategory } from "react-icons/md";
 import { BiSolidRename } from "react-icons/bi";
 import { FaBarcode } from "react-icons/fa6";
+import { FaPrint } from "react-icons/fa6";
 import { useMemo } from 'react'; // import useMemo for memoized calculation
 import Menu from '@/components/Menu'
 import Link from 'next/link';
 import { useGlobalState } from "@/js/globaluser";
 import LoginPage from "@/app/authentication/login/page";
+import { useReactToPrint } from 'react-to-print';
 
 const Page = () => {
     const {user} = useGlobalState()
@@ -28,13 +30,34 @@ const Page = () => {
     const [searchType, setSearchType] = useState('barcode');
     const [recalibratingAll, setRecalibratingAll] = useState(false);
     const [recalibProgress, setRecalibProgress] = useState(null);
+    const [stockFilter, setStockFilter] = useState('all');
     const searchRef = useRef(null);
+    const printRef = useRef(null);
+
+    const displayedProducts = useMemo(() => {
+        let list = [...filteredProducts];
+        if (stockFilter === 'positive') list = list.filter(p => p.onHand > 0);
+        else if (stockFilter === 'zero') list = list.filter(p => p.onHand === 0);
+        else if (stockFilter === 'negative') list = list.filter(p => p.onHand < 0);
+        else if (stockFilter === 'asc') list.sort((a, b) => a.onHand - b.onHand);
+        else if (stockFilter === 'desc') list.sort((a, b) => b.onHand - a.onHand);
+        return list;
+    }, [filteredProducts, stockFilter]);
+
     const totalCost = useMemo(() => {
-        return filteredProducts.reduce((sum, product) => sum + (product.cost * product.onHand), 0);
-    }, [filteredProducts]);
+        return displayedProducts.reduce((sum, product) => sum + (product.cost * product.onHand), 0);
+    }, [displayedProducts]);
     const totalSale = useMemo(() => {
-        return filteredProducts.reduce((sum, product) => sum + (product.sale * product.onHand), 0);
-    }, [filteredProducts]);
+        return displayedProducts.reduce((sum, product) => sum + (product.sale * product.onHand), 0);
+    }, [displayedProducts]);
+
+    const reactToPrintFn = useReactToPrint({
+        contentRef: printRef,
+        pageStyle: `
+            @page { size: 80mm auto; margin: 4mm; }
+            @media print { body { font-size: 9px; } }
+        `,
+    });
 
     const handleSearch = (e) => {
         const searchValue = e.target.value.toLowerCase();
@@ -89,21 +112,18 @@ const Page = () => {
 
     const exportToCSV = () => {
         const shopName = selectedShop ? selectedShop.shopName : 'stock'
-        const headers = ['Item Code', 'Product Name', 'Category', 'Supplier', 'OnHand', 'Cost', 'Cost Total', 'Sale', 'Sale Total']
-        const rows = filteredProducts.map(p => [
+        const headers = ['Item Code', 'Product Name', 'Category', 'Supplier', 'OnHand', 'Sale Price/Unit', 'Sale Total']
+        const rows = displayedProducts.map(p => [
             p.itemCode,
             `"${(p.name || '').replace(/"/g, '""')}"`,
             `"${(p.category?.name || '').replace(/"/g, '""')}"`,
             `"${(p.suplier?.customerName || '').replace(/"/g, '""')}"`,
             p.onHand.toFixed(2),
-            p.cost.toFixed(2),
-            (p.cost * p.onHand).toFixed(2),
             p.sale.toFixed(2),
             (p.sale * p.onHand).toFixed(2),
         ])
-        const totalCostVal = filteredProducts.reduce((s, p) => s + p.cost * p.onHand, 0)
-        const totalSaleVal = filteredProducts.reduce((s, p) => s + p.sale * p.onHand, 0)
-        rows.push(['', 'TOTAL', '', '', filteredProducts.length, '', totalCostVal.toFixed(2), '', totalSaleVal.toFixed(2)])
+        const totalSaleVal = displayedProducts.reduce((s, p) => s + p.sale * p.onHand, 0)
+        rows.push(['', 'TOTAL', '', '', displayedProducts.length, '', totalSaleVal.toFixed(2)])
 
         const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
@@ -225,13 +245,32 @@ if(user && user.permissions.includes("stock")){
                             <Searchoption data={customers} setData={setSelectedCustomer} onChange={(e)=>{handleChange(e,'customer')}} type="customer" />
                         </div>
                     </div>
-                    <div className="flex justify-end gap-2 px-2 pb-2">
+                    <div className="flex flex-wrap justify-end gap-2 px-2 pb-2">
+                        <select
+                            value={stockFilter}
+                            onChange={e => setStockFilter(e.target.value)}
+                            className='px-3 py-2 rounded-md bg-boxdark border border-slate-500 text-white text-sm outline-none focus:border-blue-500'
+                        >
+                            <option value="all">All Stock</option>
+                            <option value="asc">OnHand: Low → High</option>
+                            <option value="desc">OnHand: High → Low</option>
+                            <option value="positive">Positive Only</option>
+                            <option value="zero">Zero Only</option>
+                            <option value="negative">Negative Only</option>
+                        </select>
                         <button
                             onClick={exportToCSV}
-                            disabled={filteredProducts.length === 0}
+                            disabled={displayedProducts.length === 0}
                             className='px-4 py-2 rounded-md bg-green-700 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold border border-green-500 transition-colors text-sm'
                         >
                             Export CSV
+                        </button>
+                        <button
+                            onClick={() => reactToPrintFn()}
+                            disabled={displayedProducts.length === 0}
+                            className='flex items-center gap-1 px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold border border-blue-500 transition-colors text-sm'
+                        >
+                            <FaPrint /> Print List
                         </button>
                         <button
                             onClick={recalibrateAllStock}
@@ -274,13 +313,13 @@ if(user && user.permissions.includes("stock")){
                                 <div className="p-1 w-1/12">Sale</div>
                                 <div className="p-1 w-1/12">Sale Total</div>
                             </div>
-                            {filteredProducts.length > 0 ? (
-                                filteredProducts.map((product,key) => (
+                            {displayedProducts.length > 0 ? (
+                                displayedProducts.map((product,key) => (
                                     <Link key={key} href={`/management/stock/stockdetail/${product._id}`}>
                                     <div key={product._id} className="hover:bg-blue-200 flex items-center dark:hover:bg-slate-500 font-bold cursor-pointer">
                                         <div className="p-1 w-1/12">{product.itemCode}</div>
                                         <div className="p-1 w-2/12">{product.name}</div>
-                                        <div className="p-1 w-1/12"><Image alt="icon" height={50} width={50} src={`${apiaddress}${product.picture[0]}`} /></div>
+                                        <div className="p-1 w-1/12"><Image alt="icon" height={50} width={50} src={`${apiaddress}${product.picture?.[0] || '/images/products/default.png'}`} /></div>
                                         <div className="p-1 w-1/12">{product.category?.name}</div>
                                         <div className="p-1 w-2/12">{product.suplier && product.suplier.customerName}</div>
                                         <div className="p-1 w-1/12">{product.onHand.toFixed(2) }</div>
@@ -297,7 +336,7 @@ if(user && user.permissions.includes("stock")){
                     </div>
                 <div className='text-green-600 flex bg-boxdark space-x-10 border-t-2 border-l-2 mt-3 fixed bottom-0 right-0 border-blue-600 text-2xl font-bold justify-end p-2 pt-5'>
                     <h3>
-                    Total Items: {filteredProducts.length}  
+                    Total Items: {displayedProducts.length}  
                     </h3>
                     <h3>
                     Total Cost: {totalCost.toFixed(2)}  
@@ -361,6 +400,49 @@ if(user && user.permissions.includes("stock")){
                 </div>
             </div>
         )}
+
+        {/* Hidden 80mm print template */}
+        <div style={{ display: 'none' }}>
+            <div ref={printRef} style={{ width: '72mm', fontFamily: 'monospace', fontSize: '9px', padding: '2mm' }}>
+                <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+                    <strong style={{ fontSize: '12px' }}>{selectedShop ? selectedShop.shopName : 'Stock List'}</strong>
+                    <br />
+                    <span>Products Stock Report</span>
+                    <br />
+                    <span>{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                    {stockFilter !== 'all' && (
+                        <><br /><span style={{ fontSize: '8px' }}>
+                            Filter: {stockFilter === 'asc' ? 'Low→High' : stockFilter === 'desc' ? 'High→Low' : stockFilter.charAt(0).toUpperCase() + stockFilter.slice(1) + ' Only'}
+                        </span></>
+                    )}
+                </div>
+                <div style={{ borderTop: '1px dashed #000', borderBottom: '1px dashed #000', padding: '2px 0', display: 'flex', fontWeight: 'bold', marginBottom: '2px' }}>
+                    <span style={{ width: '46%' }}>Product</span>
+                    <span style={{ width: '18%', textAlign: 'right' }}>OnHand</span>
+                    <span style={{ width: '18%', textAlign: 'right' }}>Price</span>
+                    <span style={{ width: '18%', textAlign: 'right' }}>Total</span>
+                </div>
+                {displayedProducts.map((p, i) => (
+                    <div key={i} style={{ display: 'flex', borderBottom: '1px dotted #ccc', padding: '1px 0' }}>
+                        <span style={{ width: '46%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{p.name}</span>
+                        <span style={{ width: '18%', textAlign: 'right', color: p.onHand < 0 ? 'red' : p.onHand === 0 ? '#888' : 'inherit' }}>{p.onHand.toFixed(2)}</span>
+                        <span style={{ width: '18%', textAlign: 'right' }}>{p.sale.toFixed(2)}</span>
+                        <span style={{ width: '18%', textAlign: 'right' }}>{(p.sale * p.onHand).toFixed(0)}</span>
+                    </div>
+                ))}
+                <div style={{ borderTop: '1px dashed #000', marginTop: '3px', paddingTop: '3px', fontWeight: 'bold' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Total Items:</span><span>{displayedProducts.length}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Total Sale:</span><span>{totalSale.toFixed(2)}</span>
+                    </div>
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '6px', fontSize: '8px' }}>
+                    Printed by Cyber POS
+                </div>
+            </div>
+        </div>
     </>);
 }else{
     return(

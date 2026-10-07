@@ -4,7 +4,7 @@ const dbConfig = {
     port: 3306,
     user: 'root',
     password: 'root',
-    database: 'cyber_khata',
+    database: 'cyber_pos',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,

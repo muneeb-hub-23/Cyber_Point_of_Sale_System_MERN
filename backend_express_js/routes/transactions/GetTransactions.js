@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
       return t
     })
 
-    res.json(parsed.reverse());
+    res.json(parsed);
   } catch (error) {
     console.error('Error fetching transactions:', error);
     res.status(500).send('Server error');
